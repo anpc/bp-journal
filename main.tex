@@ -1,5 +1,2723 @@
 \documentclass{article}
-\usepackage[utf8]{inputenc}
+
+\let\R\relax
+\usepackage[small,caps,funcfont=slant]{complexity}
+\def\L{\protect\pL}  
+\def\R{\protect\pR}
+
+%% notes
+
+\newcommand{\todo}[1][Default]{}
+\newcommand{\ynote}[1]{}
+\newcommand{\enote}[1]{}
+\newcommand{\anote}[1]{}  
+%% protocol
+
+\newlength{\protocolwidth}
+\setlength{\protocolwidth}{\textwidth}
+
+\newcommand{\pprotocol}[5]{
+	{\begin{figure*}[#4]
+			\begin{center}
+				\fbox{
+					\small
+					\hbox{\quad
+						\begin{minipage}{0.99\textwidth}
+							\begin{center}
+								{\bf #1}
+							\end{center}
+							#5
+							\caption{\label{#3} #2}
+						\end{minipage}
+						\quad}
+				}
+			\end{center}
+		\end{figure*}
+	} }
+	
+	\newcommand{\protocol}[4]{
+		\pprotocol{#1}{#2}{#3}{htbp}{#4}
+	}
+
+%%%%%%%%%%%%%%%%%55
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\usepackage{fullpage}
+\usepackage{bbm}
+% Various AMS fonts.
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{pst-node}
+\usepackage{xspace}
+
+\usepackage{ifthen}
+
+\usepackage{latexsym}
+\usepackage{amstext}
+% Many special mathematical characters, including the
+% famous blackboard bold letters used.
+\usepackage{amssymb}
+\usepackage{epic,eepic}
+
+%%%%%%%%%
+
+\newcommand{\pr}{\mbox{\bf\rm Pr}}
+\def\eqdef{\stackrel {\triangle}{=}}
+\def\ntvss{$(n,t)$-VSS}
+\def\ntsm{$(n,t)$-SM}
+\newcommand{\s}{{\sigma}}
+\newcommand{\COR}{{\mathsf{COR}}}
+\renewcommand{\neg}{{\mathsf{neg}}}
+\newcommand{\vm}{\mathbf{m}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\vy}{\mathbf{y}}
+\newcommand{\vz}{\mathbf{z}}
+\renewcommand{\D}{{\cal D}}
+\newcommand{\out}{{\mathrm{OUT}}}
+\renewcommand{\M}{{\cal M}}
+\renewcommand{\P}{{\cal P}}
+\renewcommand{\A}{{\cal A}}
+\renewcommand{\K}{{\cal K}}
+\newcommand{\V}{{\cal V}}
+\newcommand{\Rnd}{{\cal R}}
+\newcommand{\rec}{\mbox{\bf Rec}}
+\newcommand{\view}{\mbox{\bf View}}
+\newcommand{\exec}{{\sc{exec}}}
+
+\newcommand{\lset}{\left \{}
+\newcommand{\rset}{\right \}}
+\newcommand{\bit}{\{0,1\}}
+\newcommand{\nbits}{\{0,1\}^n}
+\newcommand{\str}{\{0,1\}^*}
+\newcommand{\stcon}{\mbox{st-con\ }}
+
+\def\squarebox#1{\hbox to #1{\hfill\vbox to #1{\vfill}}}
+
+
+\newcommand{\ignore}[1]{}
+\newcommand{\remove}[1]{}
+\newcommand{\full}[1]{#1}
+\newcommand{\conf}[1]{}
+
+\newcommand{\nc}[1]{{\mathrm{NC}^{#1}}}
+\newcommand{\rnc}[1]{{\mathrm{RNC}^{#1}}}
+\newcommand{\NCone}{{\nc{1}}}
+\newcommand{\NCzero}{{\nc{0}}}
+
+%%%%%%%%%
+
+\newcommand{\SD}{{\sf SD }}
+\newcommand{\height}{{\sf height}}
+\newcommand{\order}{{\mathrm{ord}}}
+\newcommand{\genot}{{\sf G_{OT}}}
+\newcommand{\queot}{{\sf Q_{OT}}}
+\newcommand{\ansot}{{\sf A_{OT}}}
+\newcommand{\decot}{{\sf D_{OT}}}
+\newcommand{\simot}{{\sf Sim_{OT}}}
+\renewcommand{\sim}{{\sf Sim}}
+\newcommand{\otl}{{\tau}}
+\newcommand{\encr}[2]{E_{#1}(#2)}
+\newcommand{\gendj}{Gen}
+\newcommand{\encdj}{{E}_{N,e}}
+\newcommand{\encdjnr}{{\tilde{E}}_{N,e}}
+\newcommand{\decdj}{{D}_{(p_1,p_2),e}}
+\newcommand{\lab}{{\mathsf{label}}}
+\newcommand{\support}{{\mathrm{support}}}
+\newcommand{\floor}[1]{\mathify{\left\lfloor{#1}\right\rfloor}}
+\newcommand{\ceil}[1]{\mathify{\left\lceil{#1}\right\rceil}}
+\newcommand{\plain}{{{M}}}
+\newcommand{\plaintext}[1]{\plain_{#1}}
+\newcommand{\adv}{{\sf Adv }}
+
+\newcommand{\fnrngdom}[2]{#1\to#2}
+\newcommand{\fndef}[3]{{#1\,:\,\fnrngdom{#2}{#3}}}
+\newcommand{\sfoot}[1]{\footnote{NOTE TO SELF: #1}}
+\newcommand{\qfoot}[1]{\footnote{Q: #1}}
+%\newcommand{\mathify}[1]{\ifmmode{#1}\else\mbox{$#1$}\fi}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\size}[1]{|#1|}
+\newcommand{\condset}[2]{\set{#1|#2}}
+\newcommand{\rsize}{t+3}
+\newcommand{\Z}{{\mathbb{Z}}}
+\newcommand{\numsets}{t_1+1}
+
+\newtheorem{THEOREM}{Theorem}[section]
+\newenvironment{theorem}{\begin{THEOREM} \hspace{-.85em} {\bf .} \rm}%
+	{\end{THEOREM}}
+\newtheorem{COROLLARY}[THEOREM]{Corollary}
+\newenvironment{corollary}{\begin{COROLLARY} \hspace{-.85em} {\bf .} \rm}%
+	{\end{COROLLARY}}
+\newtheorem{LEMMA}{Lemma}[section]
+\newenvironment{lemma}{\begin{LEMMA} \hspace{-.85em} {\bf .} \rm}%
+	{\end{LEMMA}}
+\newtheorem{CLAIM}{Claim}[section]
+\newenvironment{claim}{\begin{CLAIM} \hspace{-.85em} {\bf .} \rm}%
+	{\end{CLAIM}}
+\newtheorem{EXAMPLE}{Example}[section]
+\newenvironment{example}{\begin{EXAMPLE} \hspace{-.85em} {\bf .} \rm}%
+	{\end{EXAMPLE}}
+\newtheorem{REMARK}{Remark}[section]
+\newenvironment{remark}{\begin{REMARK} \hspace{-.85em} {\bf .} \rm}%
+	{\end{REMARK}}
+\newenvironment{proof}{\noindent {\bf Proof.} \hspace{.677em}}%
+{ \qed}
+\def\squarebox#1{\hbox to #1{\hfill\vbox to #1{\vfill}}}
+\newcommand{\qed}{\hspace*{\fill}
+	\vbox{\hrule\hbox{\vrule\squarebox{.667em}\vrule}\hrule}\smallskip}
+{}
+\newtheorem{DEFINITION}{Definition}[section]
+\newenvironment{definition}{\begin{DEFINITION} \hspace{-.85em} {\bf .} \rm}%
+	{\end{DEFINITION}}
+\newtheorem{PROPOSITION}{Proposition}
+\newenvironment{proposition}{\begin{PROPOSITION} \hspace{-.85em} {\bf .} \rm}%
+	{\end{PROPOSITION}}
+\newtheorem{QUESTION}{Question}[section]
+\newenvironment{question}{\begin{QUESTION} \hspace{-.85em} {\bf .} \rm}%
+	{\end{QUESTION}}
+\newtheorem{FACT}{Fact}[section]
+\newenvironment{fact}{\begin{FACT} \hspace{-.85em} {\bf .} \rm}%
+	{\end{FACT}}
+
+\newtheorem{CONSTRUCTION}{Construction}[section]
+\newenvironment{construction}{\begin{CONSTRUCTION} \hspace{-.85em} {\bf .} \rm}%
+	{\end{CONSTRUCTION}}
+
+\newtheorem{OBSERVATION}{Observation}[section]
+\newenvironment{observation}{\begin{OBSERVATION} \hspace{-.85em} {\bf .} \rm}%
+	{\end{OBSERVATION}}
+
+% Defs used by the gen-MPC result
+\newcommand{\Recon}{{\tt{Rec}}}
+\newcommand{\SIM}{{\cal S}}
+\newcommand{\T}{{\cal T}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\calS}{{\cal S}}
+\renewcommand{\MAC}{{\tt{MAC}}}
+\newcommand{\VER}{{\tt{Ver}}}
+
+% Defs used by the bp result
+\newcommand{\superparagraph}[1]{\medskip\noindent {\bf #1}}
+\newcommand{\from}{{\,\leftarrow\,}}
+\newcommand{\prob}[2][]{{\mathop{\mathbf{Pr}}_{#1}\!{\left[{#2}\right]}}}
+\newcommand{\condprob}[3][]{{\mathop{\mathbf{Pr}}_{#1}\!{\left[{#2}|{#3}\right]}}}
+\newcommand{\samp}[2]{#1\from #2}
+\newcommand{\usamp}[2]{#1\stackrel{R}{\leftarrow}#2}
+\newcommand{\bools}[1][]{{\set{0,1}}^{#1}}
+% conditionals
+\newcommand{\fornonempty}[2]{\ifthenelse{\equal{#1}{}}{}{#2}}
+\newcommand{\emptyornot}[3]{\ifthenelse{\equal{#1}{}}{#2}{#3}}
+% manage ordered sequences
+\newcommand{\optrange}[4][,]{#2#1#3#1\ldots#1#4}
+\newcommand{\opbrange}[3][,]{#2#1\ldots#1#3}
+\newcommand{\oprrange}[2][,]{#2#1\ldots}
+\newcommand{\vars}[3][1]{\emptyornot{#3}{\oprrange[,]{{#2}_{#1}}}{\opbrange[,]{{#2}_{#1}}{{#2}_{#3}}}}
+\newcommand{\varsu}[3][1]{\emptyornot{#3}{\oprrange[,]{{#2}^{#1}}}{\opbrange[,]{{#2}^{#1}}{{#2}^{#3}}}}
+\newcommand{\commvars}{\vars{x}{n}}
+\newcommand{\bp}{\mbox{BP}\;}
+\newcommand{\bpnospace}{\mbox{BP}}
+\newcommand{\gen}{{\sf Gen}}
+\newcommand{\enc}{{\sf Enc}}
+\newcommand{\eval}{{\sf Eval}}
+\newcommand{\dec}{{\sf Dec}}
+\newcommand{\N}{{\mathbb{N}}}
+\newcommand{\ot}{\mbox{OT}\;}
+\newcommand{\otns}{\mbox{OT}}
+\newcommand{\strongot}{{Strong-OT\;}}
+\newcommand{\mathify}[1]{\ifmmode{#1}\else\mbox{$#1$}\fi}
+\newcommand{\tofnot}[2][1]{\mathify{OT_{#2}^{#1}}}
+\newcommand{\real}{{\sf Real}}
+\newcommand{\ideal}{{\sf Ideal}}
+\newcommand{\env}{{\sf Env}}
+\newcommand{\length}{{\sf length}}
+\newcommand\szh{{\em size hiding }}
+\newcommand{\U}[1]{\mathbb{Z}_{#1}^*}
+\newcommand{\FF}{{\mathbb F}}
+\newcommand{\mSP}{\text{mSP}}
+\newcommand{\core}{\mathop{\rm C}}
+\newcommand{\GF}{\mathop{\rm GF}}
+\newcommand{\rank}{\text{\rm rank}}
+\newcommand{\eps}{{\epsilon}}
+\newcommand{\hatM}{\widehat{M}}
+\newcommand{\vect}[1]{ \langle #1  \rangle}
+\newcommand{\ustcon}{\mbox{undirected-st-con}}
+
+%\newcommand{\poly}{\text{POLY\ }}
+\newcommand{\polynospace}{\mbox{POLY}}
+\newcommand{\tp}{\mbox{TP\ }}
+\newcommand{\multiparty}{\mbox{multi-party\ }}
+\newcommand{\twoparty}{\mbox{two-party\ }}
+\newcommand{\tworound}{\mbox{2-round\ }}
+\newcommand{\othyb}{\mbox{OT-hybrid\ }}
+
+
+\title{Evaluating branching programs on encrypted data}\label{sec-eval-bp}
+
+
 \begin{document}
-(Type your content here.)
-\end{document}
+	\maketitle
+\section{Introduction}
+Computing on encrypted data is arguably one of the most intriguing
+open problems in cryptography. The variant of this problem we are
+interested in may be illustrated by the following motivating
+scenario. Suppose that a client, holding a sensitive local input
+$x$, wishes to run a remote program $P$ on this input. For
+instance, $x$ can be the medical history of an individual and $P$ a
+complex propriety algorithm determining whether to offer insurance
+coverage to this individual. To the end of evaluating $P(x)$, the
+client wishes to publish an {\em encrypted} version of $x$, denoted
+by $c$, while still allowing a server owning $P$ to effectively run
+its program on the ciphertext $c$. That is, based on $P$ and $c$
+the server should compute in polynomial time a message $c'$, from
+which the client can recover $P(x)$ using its secret key.
+% but cannot learn additional information about $P$.
+
+
+As described so far, the problem can be solved by simply letting
+$c'$ include a complete description of $P$. However, this trivial
+solution has two significant weaknesses. First, it completely
+reveals $P$ to the client, whereas ideally the client should only
+be able to learn $P(x)$. Second, when the description size of $P$
+is bigger than its input and output, this solution is wasteful in
+terms of communication. Ideally, the communication should be {\em
+a-priori} bounded by some polynomial in the size of the input $x$,
+the output $P(x)$ and the security parameter, independently of the
+description size of $P$.  The same holds for the amount of local
+computation and storage used by the client. To summarize, it is
+desirable to obtain solutions which satisfy the following two
+goals:
+\begin{enumerate}
+\item Hide $P$ from the client (to the extent possible).
+
+\item Make the client's work independent of the size of $P$. In
+particular, $c'$ should be {\em succinct} in the sense that its
+size depends only on the size of the input and output and not
+on that of $P$.
+\end{enumerate}
+Jumping ahead, the main open problem in the area is that of
+realizing the second goal. This problem is the focus of our
+work.
+
+%
+%As described so far, the problem can be solved by simply
+%letting $c'$ include a complete description of $P$. However,
+%this trivial solution totally fails to achieve the following
+%two natural goals. First, we would like $c'$ to reveal $P(x)$
+%alone, whereas the trivial solution completely reveals $P$ to
+%the client.  Second, considering a situation where $P$ is
+%complex algorithm whose description size is bigger than the
+%length of $x$, we would like the total amount of work
+
+Before addressing known methods for realizing the above two
+goals, it is instructive to further clarify what we mean when
+referring to a ``program'' $P$. A program is a string that
+represents a function, mapping an input $x$ to an output $y$. To
+simplify the exposition, we restrict the attention to finite
+boolean functions $f:\{0,1\}^n\to\{0,1\}$. The correspondence
+between a program $P$ and the function it represents is
+determined by an underlying {\em representation model}. Common
+representation models for finite functions include circuits,
+formulas, branching programs, OBDDs, finite automata, decision
+trees, and truth tables. Once the representation model is fixed,
+every string $P$ has a unique interpretation as a program
+computing some specific function $f$. In this work we will be
+interested in {\em universal} representation models, in which
+every function $f$ can be computed by some program $P$ in the
+model. Note that all of the models in the above list are
+universal.  However, the {\em complexity} of representing a
+function can greatly vary between the models.
+%However, there is
+%a significant difference between the models as far as
+%complexity goes.
+Circuits are the most powerful model in the list, in the sense
+that a program in any of the other models has an equivalent
+circuit of essentially the same size. On the other extreme,
+truth tables are the least powerful of these models, requiring
+a program of size $2^n$ for any function $f$. This makes truth
+tables useless for all but very small input lengths $n$.
+
+We return to the question of realizing the above two goals. Goal~1
+can be addressed by using techniques from the area of secure
+computation.  Most notably, Yao's garbled circuit
+technique~\cite{yao86,cckm00,LP04} can handle any {\em circuit} $P$,
+allowing to computationally hide all information about $P$ other
+than $P(x)$ and the size of $P$. A similar result can be obtained
+for less powerful representation models, such as
+formulas~\cite{syy99,K,Kol} or various kinds of branching
+programs~\cite{beaver00,FKN94,ik00,Rap} with the additional feature of
+keeping $P$ information-theoretically private. (The latter variant
+of computing on encrypted data was referred to as
+``cryptocomputing'' by Sander et al.~\cite{syy99}.) However, all
+these techniques inherently fail with respect to Goal~2, as they
+require the size of $c'$ to be comparable to the size of $P$. This
+gives rise to the following question:
+\begin{quote}
+For which natural representation models can we realize Goal~2,
+namely evaluate an arbitrary program $P$ on an encrypted input
+so that the client's work does not depend on the size of $P$?
+\end{quote}
+A positive answer for the case of circuits (hence also for all
+other models) would easily follow from the existence of a 
+homomorphic encryption scheme --- one that allows to freely perform
+both additions and multiplications on ciphertexts. However, there
+is yet no candidate for an encryption scheme with this strong
+property.
+
+The first protocols in which the client's work can go below the
+size of $P$ were given in the context of Private Information
+Retrieval (PIR)~\cite{CGKS95,KO97}. A single-server PIR
+protocol can be viewed as a protocol for evaluating a {\em
+truth table} $P$ of size $N=2^n$ on an encrypted input $x$ of
+size $n$. There are such protocols in which the client's work
+is polynomial in $n$~\cite{cms99,L04}, thus affirmatively
+answering the above question for the case of a truth table
+representation.
+%These protocols can be strengthened to
+%simultaneously meet Goal~1 and Goal~2~\cite{GIKM,NP}.
+Extensions to a {\em set} representation (where $P$ lists the set
+of inputs on which $f$ evaluates to $1$) were given in the context
+of private keyword search~\cite{KO97,CGN,FIPR05,OS}. Recently, a cryptosystem which allows to evaluate 2-DNF formulas and degree-2
+polynomials on encrypted data was given by Boneh et
+al.~\cite{BGN}.\footnote{In fact, the cryptosystem of~\cite{BGN} realizes a stronger form of computing on encrypted data in which the length
+of the ciphertext $c'$ depends only on the security parameter and
+not on the length of the input. } The question of realizing Goal~2
+for more powerful and useful representation models remained open.
+
+\subsection{Our contribution}
+
+We obtain an affirmative answer to our main question for the case of
+{\em length-bounded branching programs}. To explain the meaning of
+this result, we give some background on branching programs and their
+complexity. A (deterministic) branching program $P$ is defined by a
+directed acyclic graph in which the nodes are labeled by input
+variables and every nonterminal node has two outgoing edges, labeled
+by 0 and 1. An input $x\in\{0,1\}^n$ naturally induces a computation
+path from a distinguished initial node to a terminal node, whose
+label determines the output $P(x)$. The {\em size} of $P$ is defined
+as the number of nodes in the graph and its {\em length} is the
+length of the longest path from the initial node to a terminal node.
+Branching programs are a relatively powerful representation model.
+In particular, any logarithmic space or $\NCone$ computation can be
+carried out by a family of polynomial-size branching programs.
+
+We consider classes of branching programs whose length is bounded by
+some public parameter $\ell$, where $\ell=\ell(n)$ is polynomial in
+$n$. Representation by $\ell(n)$-bounded branching programs is
+universal whenever $\ell(n)\ge n$. Indeed, any function $f$ can be
+computed by a complete decision tree of length $n$ and size
+$O(2^n)$. Branching programs of length $\ell(n)=n$ are of special
+interest, as they can simulate several representation models that
+are often used in practice.  For instance, if $f$ can be computed by
+a deterministic finite automaton with $s$ states, then it can be
+computed by a branching program of length $n$ and size $sn+1$. Other
+useful models such as decision trees and OBDDs are also special
+cases of length-$n$ branching programs. Finally, efficient data
+structures for various natural search problems (such as tries and
+balanced search trees) can be implemented by branching programs with
+a small length.
+
+Our main result is a public-key encryption scheme with the
+following properties. Given a branching program $P$ and an
+encryption $c$ of an input $x$, it is possible to efficiently
+compute a {\em succinct} randomized ciphertext $c'$ from which
+$P(x)$ can be efficiently decoded using the secret key. The size of
+$c'$ and the work required for decrypting it depend polynomially on
+the size of $x$ and the {\em length} of $P$, but do not further
+depend on the size of $P$. Thus, whenever the length $\ell(n)$ is
+some fixed (polynomial) function of $n$, we realize Goal~2 above.
+As interesting special cases, one can evaluate finite automata,
+decision trees, and OBDDs on encrypted data, where the size of the
+resulting ciphertext $c'$ does not depend on the size of the object
+being evaluated. These are the first general representation models
+for which such a feasibility result is shown. We also strengthen
+the above protocol to realize Goal~1 in a very strong sense,
+guaranteeing that $c'$ does not contain additional information
+about $P$ (other than $P(x)$ for some $x$) even if the public key
+and the ciphertext $c$ are maliciously formed.
+
+\superparagraph{Size hiding.} Our protocols have the following {\em
+size hiding} feature: the ciphertext $c'$ does not reveal any
+information whatsoever about the {\em size} of $P$, no matter how
+large $P$ is.\footnote{We note that perfect size hiding cannot be
+achieved in the physical reality, as the {\em time} it takes the
+server to respond reveals an upper bound on the size of $P$.
+However, increasing this upper bound on the size of $P$ does not
+involve additional work. This should be contrasted with the partial
+size hiding that can be achieved using previous protocols by simply
+padding the inputs.  } This should be contrasted with previous
+methods of computing on encrypted data, in which the communication
+complexity and the client's work directly reflect (an upper bound
+on) the size of $P$. Thus, we achieve a stronger version of Goal~1
+than in all previous solutions. A similar notion of size hiding was
+previously considered by Micali et al.~in the context of {\em
+zero-knowledge sets}~\cite{MRK}.
+%\footnote{The problem considered
+%in~\cite{MRK} is that of proving in zero knowledge that a secret
+%committed database satisfies some public property. This problem is
+%very different from the problem considered in this paper. In
+%particular, the problem from~\cite{MRK} becomes trivial in the
+%semi-honest model, whereas our problem is almost as difficult.}
+
+
+\superparagraph{Applications to secure two-party computation.} Our
+technique for computing on encrypted data immediately gives rise to
+a one-round (two-message) secure protocol for evaluating a
+length-bounded branching program $P$ held by a server on an input
+$x$ held by a client. (In the semi-honest model, this also implies
+a protocol for the setting in which $P$ is public but its inputs
+are partitioned between the two parties.) In the case of malicious
+parties, the protocol satisfies the same relaxed security
+definition used in previous works on one-round secure computation
+in the plain model~\cite{NP01,AIR01,FIPR05,T05,L05}. A distinctive
+feature of our protocol is that the client's work is independent of
+the size of $P$ and moreover the protocol hides the size of $P$
+from the client.\footnote{A secure two-party protocol in which the
+communication complexity is almost independent of the size of $P$
+can be obtained using the technique of Naor and Nissim~\cite{NN}.
+However, this protocol requires multiple rounds of interaction and
+does not achieve size hiding. } The latter size hiding feature
+demonstrates that while hiding the sizes of {\em both} inputs is
+generally impossible, there are useful cases where one can hide the
+size of {\em one} of the inputs while maintaining the secrecy of
+the other input (but not its size).
+
+As a concrete application, one can obtain a secure one-round
+protocol for {\em keyword search} which totally hides from the
+client the size of the data set held by the server. That is, a
+client holding a secret keyword $x$ can query a database $D$ held by
+a server without revealing $x$ and while assuring the server that it
+cannot learn anything about $D$ (including its size) other than
+whether $x\in D$. Previous solutions to the secure keyword search
+problem~\cite{CGN,FIPR05,OS} fall short of achieving the size hiding
+goal. A size hiding protocol as above is obtained by representing
+$D$ as a {\em trie} data structure, which can be viewed as an
+instance of a length-$n$ branching program.
+%Other data structures
+%can be used for obtaining secure non-interactive protocols for other
+%search problems, such as successor (finding the least element $d\in
+%D$ such that $d>x$) and rank (finding the number of elements $d\in
+%D$ such that $d\le x$) .
+
+We finally note that the one-round protocol obtained using our
+technique yields a simpler alternative to similar protocols from the
+literature that provide {\em unconditional} security to the
+server~\cite{syy99,beaver00,ik00,Rap,Kol}. Its complexity improves over
+previous protocols even in the case of branching programs of
+unbounded length. For evaluating a branching program of size $s$
+over $n$ binary inputs, the communication complexity of our protocol
+is $O(kns)$ (where $k$ is a security parameter), improving over the
+$O(ks^2)$ complexity of the best previous solutions in this
+setting~\cite{ik00}. It should be noted, however, that the latter
+solutions apply also to {\em non-deterministic} branching programs,
+whereas our technique applies only to the deterministic model.
+
+\superparagraph{Techniques.} The basic version of our protocol uses
+a simple generalization of the technique of Kushilevitz and
+Ostrovsky~\cite{KO97} for constructing single-server PIR protocols.
+In fact, the protocol of~\cite{KO97} (as well as its variants
+from~\cite{Ste98,L04}) can be viewed as an instance of our protocol
+in which the branching program is a complete (but possibly
+non-binary) decision tree whose $i$-th level depends only on the
+$i$-th input variable.
+
+Our protocol proceeds roughly as follows. The ciphertext $c$ is
+obtained by separately encrypting each bit of $x$ using an additively homomorphic public-key encryption scheme. (For efficiency reasons we
+rely on the Damg{\aa}rd-Jurik scheme~\cite{DJ01}; this scheme was
+previously used in the context of PIR by Lipmaa~\cite{L04}.) To
+evaluate $P$ on $x$ we proceed in a bottom up manner. Starting from
+the terminal nodes, in the $i$-th iteration we handle all nodes
+whose distance from the terminal nodes is $i$. For each such node,
+we compute a ciphertext containing an (iterated) encryption of its
+value. Using the homomorphic property, the encryption assigned to
+every node can be computed from the encryptions assigned to its
+children (which were computed in previous iterations) and the
+encryption of the input bit labeling this node.  The ciphertext $c'$
+is the (iterated) encryption assigned to the initial node. The
+client can recover $P(x)$ by applying iterated decryptions to $c'$.
+
+The stronger variant of our protocol which remains secure in the
+case of malicious clients is more involved, and relies on variants
+of previous techniques of Aiello et al.~\cite{AIR01}, Naor and
+Pinkas~\cite{NP01}, Laur and Lipmaa~\cite{L05}, and (especially)
+Kalai~\cite{T05}.
+
+
+\paragraph{Organization.} In Section~\ref{sec-prel-models} we define our
+general notion of representation models as well as the specific
+branching program model for which our results apply. Section~\ref{sec-bp-prelims} contains
+some algebraic claims used tin this chapter.
+In Section~\ref{sec-cryptodefs} we define the problem of computing on
+encrypted data as well as a variant of Oblivious Transfer on which
+our solution relies. Our main protocol is presented in
+Section~\ref{sec-main}. This protocol guarantees the privacy of the
+client as well as the privacy of the server against a semi-honest
+client. The case of malicious clients is discussed in
+Section~\ref{sec-malicious}.
+%For lack of space, some details are
+%deferred to the full version.
+
+\section{Preliminaries}\label{sec-bp-prelims}
+In this section we present some simple technical claims used throughout this chapter.
+
+\begin{fact}[Chinese Remainder Theorem]
+  \label{fact-crt} Consider $N=p_1p_2$, where $p_1,p_2>1$ are
+  coprime. Then:
+  \begin{enumerate}
+    \item $\Z_N$ is isomorphic to $\Z_{p_1}\times\Z_{p_2}$,
+    via the isomorphism $\eta(x)=(x\mod p_1,x\mod p_2)$.
+    \item $\U{N}$ is isomorphic to $\U{p_1}\times\U{p_2}$ via the same
+    isomorphism.
+  \end{enumerate}
+\end{fact}
+
+\begin{fact}[Structure of $\U{p^h}$]
+  \label{fact-zp-cyc} For every odd prime $p$ and positive integer
+  $h$, the group $\U{p^h}$ is isomorphic to
+  $\Z_{p^{h-1}}\times\Z_{p-1}$. It follows that $\U{p^h}$ must be
+  cyclic.
+\end{fact}
+
+\begin{claim}\label{clm-cnt-sol}
+  Let $(T,+)$ be a cyclic group, and let $x,y,\mu\in T$, such that $p=gcd(ord_T(x),ord_T(y))$. Then, if $S=\set{-1<a<ord_T(x)|\exists -1<b<ord_T(y), ax+by=\mu}\neq\phi$, then $\size{S}=p$.
+  Furthermore, for all $a'\in S$, $\size{\set{(a,b)|ax+by=\mu,a=a'}}=1$.
+\end{claim}
+\begin{proof}  
+  The set $S_x=\set{x^0=1,x^{ord(x)/p},\ldots,x^{(p-1)\cdot ord(x)/p}}$ is a subgroup of $T$ of order $p$
+  (all elements are distinct, or else, $ord(x)$ would be smaller than it is).
+  Similarly,$$S_y=\set{y^0=1,y^{ord(y)/p},\ldots,y^{(p-1)\cdot ord(y)/p}}$$ is a subgroup of $T$ of order $p$.
+  Since a the subgroup of a given order of a cyclic group is unique, we must have $S_y=S_x$.
+  Thus, for every $a$ which is a multiple of $ord(x)/p$, there exists a $b$ which is a multiple of $ord(y)/p$, such that $xa=-by$, and thus, we have obtained a set of $p$ solutions to $ax+by=0$, in which all the $a$'s are distinct. To see that these are the only possible solutions to $ax+by=0$, assume the contrary, and let $(a,b)$ be such that $ax+by=0$, and, wlog. $ax\notin S_x$. $ord(ax)$ divides $ord(x)$, as $\langle ax \rangle$ is a subgroup of $\langle x \rangle$. On the other hand, $ord(ax)$ does not divide $p$, or else $ax$ would be in $S_x$. Thus, by choice of $p$, $ord(ax)$ does not divide $ord(y)$ (or else, $p$ would be different).
+  Thus, there is no solution to $ax+by=0$, since a solution $(a,b)$ satisfies $\langle ax \rangle$ is a subgroup of $\langle by \rangle$ ($ax=by$),
+  which is in turn a subgroup of $\langle y \rangle$, so we would have $ord(ax)|ord(y)$ - a contradiction.
+  Since given a solution $(a',b')$ to $ax+by=\mu$, $\set{(a,b)|ax+by=\mu}=\set{(a+a',b+b')|ax+by=0}$, the result follows.
+\end{proof}
+\begin{claim}
+  \label{clm-order-short} For $x\in\U{N^{e+1}}$, let $x'=(x\mod
+  N^e)$ be an element of $\U{N^e}$. Then $\order(x')$ divides
+  $\order(x)$.
+\end{claim}
+\begin{proof}
+  Note that ${x'}^t=1\mod N^e$ if and only if $x^t=zN^e+1\mod N^{e+1}$
+  for some $z\in\Z$. This also holds for the minimal integer $d'$, for
+  which ${x'}^{d'}=1\mod N^e$. $\order(x)$ is then $d=d'\cdot
+  \order_{\U{N^{e+1}}}(zN^e+1)$, which is divisible by $d'$.
+\end{proof}
+
+\section{Cryptographic primitives} \label{sec-cryptodefs}
+
+In this section we define both our goal of computing on encrypted
+data and the main cryptographic building block on which we rely.
+
+\subsection{Computing on encrypted data} \label{sec-clientserver}
+
+%The system is comprised of a client $C$ and a server $S$. The
+%client holds an input $x$, and the server holds an input $P$,
+%interpreted as a program. The client's goal is to learn
+%$U(x,P)$, where $U$ is a publicly known function (defining a
+%representation model), without revealing its input $x$ to the
+%server.
+We consider a scenario where a client, holding an input $x$,
+publishes a public key $pk$ and an encryption $c$ of $x$ under $pk$.
+This encryption is used by a server to efficiently evaluate a
+program $P$ (in some given representation model) on $c$, obtaining a
+ciphertext $c'$. The client then uses its secret key to recover
+$P(x)$ from $c'$. This is formalized as follows.
+%\footnote{All primitives/tasks we use/implement are special cases
+%of this notion. Our main protocol is an instance of computing on
+%encrypted data for the model of length-bounded \bp's, (Strong)-\ot
+%is an instance for truth-tables, (homomorphic) PKE is an instance
+%for the identity function.}.
+%% The above is confusing, because the primitives you mention
+%% are not just special cases of our general notion
+%% (they have further requirements).
+
+
+\begin{definition}[Computing on encrypted data]
+\label{def-cl-serv} Let
+$\fndef{U}{\bools[*]\times\bools[*]}{\bools[*]}$ be a
+representation model. A {\em protocol for evaluating programs from
+$U$ on encrypted data} is defined by a tuple of algorithms
+$(\gen,\enc,\eval,\dec)$ and proceeds as follows.
+\begin{itemize}
+\item {\sc Setup:} Given a security parameter $k$,
+the client computes $\samp{(pk,sk)}{\gen(1^k)}$ and saves $sk$ for a
+later use.
+\item {\sc Encryption:} The client
+computes $\samp{c}\enc(pk,x)$, where $x$ is the input on which a
+program $P$ should be evaluated.
+\item {\sc Evaluation:} Given the public key
+$pk$, the ciphertext $c$, and a program $P$, the server computes an
+encrypted output $\samp{c'}{\eval(1^k,pk,c,P)}$.
+\item {\sc Decryption:} Given the
+encrypted output $c'$, the client outputs $\samp{y}{\dec(sk,c')}$.
+\end{itemize}
+We require that if both parties act according to the above protocol,
+then for every input $x$, program $P$, and security parameter
+$k\in{\N}$, the output $y$ of the final decryption phase is equal to
+$U(P,x)$ except, perhaps, with negligible probability in $k$.
+\end{definition}
+
+An essential security requirement for computing on encrypted data is
+{\em client privacy}, requiring that the pair $(pk,c)$ produced in
+the above process keep the client's input $x$ semantically
+secure~\cite{GM,Goldbook}.
+\begin{definition}[Client privacy]
+\label{def-clientprivacy} Let $\Pi=(\gen,\enc,\eval,\dec)$ be a
+protocol for computing on encrypted data. We say that $\Pi$
+satisfies the {\em client privacy} requirement if the advantage of
+any PPT adversary $\adv$ in the following game is negligible in the
+security parameter $k$:
+\begin{itemize}
+\item $\adv$ is given $1^k$ and generates a pair
+$x_0,x_1\in\bools[*]$ such that $\size{x_0}=\size{x_1}$.
+\item Let $\usamp{b}{\bools}$, $\samp{(pk,sk)}{\gen(1^k)}$,
+and $\samp{c}{\enc(pk,x_b)}$.
+\item $\adv$ is given the challenge $(pk,c)$ and outputs a guess $b'$.
+\end{itemize}
+The advantage of $\adv$ is defined as $\prob{b=b'}-1/2$.
+\end{definition}
+Client privacy alone can be realized by simply letting $\eval$
+output $P$. However, it becomes nontrivial to satisfy when
+$\size{P}\gg \size{x}$ and the communication complexity is required
+to be sublinear in $\size{P}$. The latter requirement is in the
+center of this work.
+
+While client privacy suffices for some applications, we will also be
+interested in protecting the privacy of the server by hiding the
+program $P$ to the extent possible.  For simplicity we consider here
+the case of a semi-honest client, who generates a valid public key
+$pk$ and ciphertext $c$. The case of malicious clients will be
+addressed in Section~\ref{sec-malicious}.
+
+\begin{definition}[Server privacy: semi-honest model]
+\label{def-serverprivacy} Let $\Pi=(\gen,\enc,\eval,\dec)$ be a
+protocol for evaluating programs from a representation model
+%$\fndef{U}{\bools[*]\times\bools[*]}{\bools[*]}$
+$U$ on encrypted data. We say that $\Pi$ has {\em statistical
+server privacy in the semi-honest model} if there exists a PPT
+algorithm $\sim$ and a negligible function $\eps(\cdot)$ such that
+the following holds. For every security parameter $k$, input
+$x\in\{0,1\}^*$, pair $(pk,c)$ that can be generated by
+$\gen,\eval$ on inputs $k,x$, and program $P\in\{0,1\}^*$, we have
+\[ \SD(\eval(1^k,pk,c,P)\,,\,\sim(1^k, 1^{|x|},
+pk, U(P,x), 1^{\size{P}})) \le \epsilon(k).\]
+
+The case of {\em  perfect server privacy} is defined
+similarly, except that
+$\eps(k)=0$ and $\sim$ is allowed to run in expected polynomial
+time.
+
+In the case of {\em computational server privacy}, $\sim$ should
+satisfy the following requirement. For every polynomial-size circuit
+family $D$ there is a negligible function $\eps(\cdot)$ such that
+for any $k,x,pk,c,P$ as above we have
+\[ \Pr[D(\eval(1^k,pk,c,P))=1]-\Pr[D(\sim(1^k, 1^{|x|},
+pk, U(P,x), 1^{\size{P}}))=1]
+\le \eps(k).\]
+\end{definition}
+
+%In the case of perfect server privacy, we allow $\sim$ to run in
+%{\em expected} polynomial time.
+Our main protocol will have perfect server privacy. In fact, it will
+additionally hide the size of the server's input $P$ from the
+client.  We refer to this property as {\em size hiding}. This
+implies, in particular, that the length of $c'$ must be independent
+of the length of $P$.
+
+\begin{definition}[Size hiding server privacy: semi-honest model]
+\label{def-sizehiding} We say that $\Pi$ has (perfect, statistical,
+or computational) {\em size hiding server privacy} in the
+semi-honest model if it satisfies the requirements of
+Definition~\ref{def-serverprivacy} with the difference that
+$\sim$ does not get the length of $P$ as an input.
+%We then say the
+%protocol is {\em statistically} (perfectly, computationally) {\em
+%size hiding}.
+\end{definition}
+
+\full{
+\begin{remark}{\bf (On flexibility of input lengths)}
+The above definitions relax standard definitions of secure
+computation from the literature (e.g.,~\cite{canetti01,Goldbook}) in that
+they do not impose an a-priori polynomial relation between the
+lengths of the two inputs and the security parameter.\footnote{In
+the definitions from~\cite{Goldbook} it is assumed that both inputs
+have the same length, and the security parameter is taken to be
+this input length. In the definitions of~\cite{canetti01} the running
+time of the honest parties is bounded by a fixed polynomial in the
+security parameter, effectively imposing a similar bound on the
+input length.} This relaxation is motivated by the size hiding
+variant of the definition, where we allow an arbitrary gap between
+the length of the two inputs while still requiring the client to
+run efficiently in the length of its own input. Similar definitions
+have been used in other contexts of ``sublinear-communication
+cryptography'' such as private information retrieval
+(cf.~\cite{L04}), communication-efficient arguments (cf.~\cite{BG})
+and zero-knowledge sets~\cite{MRK}.\ynote{should check how similar
+these definitions are...} We note that our length-flexible
+definitions of client privacy (Definition~\ref{def-clientprivacy})
+and server privacy (Definition~\ref{def-serverprivacy}) can be
+realized by one-round secure computation protocols from the
+literature. In particular, Yao's protocol~\cite{yao86} (see
+also~\cite{FKN94,L04}) yields a client-server protocol for any
+polynomial-time computable function $f$ with computational server
+privacy, and protocols from~\cite{syy99,K,FKN94,ik00,beaver00,Kol}
+yield client-server protocols for any function $f$ in $\NCone$ or
+even NL with perfect or statistical server privacy. None of these
+protocols satisfies the additional size hiding property.
+\end{remark}
+}
+
+\begin{remark}
+Protocols $\Pi$ which satisfy our definitions of client privacy
+(Definition~\ref{def-clientprivacy}) and standard server privacy
+(Definition~\ref{def-serverprivacy}) can be easily derived from
+previous protocols for one-round secure computation. In particular,
+Yao's protocol~\cite{yao86}
+%(see also~\cite{FKN94,L04})
+yields a protocol for evaluating circuits on encrypted data with
+computational server privacy, and protocols
+from~\cite{syy99,K,FKN94,ik00,beaver00,Rap,Kol} yield protocols for
+evaluating formulas, branching programs, and even non-deterministic
+branching programs on encrypted data with perfect or statistical
+server privacy. However, in all these protocols the length of $c'$
+is generally bigger than the length of $P$. In particular, none of
+these protocols satisfies the additional size hiding property of
+Definition~\ref{def-sizehiding}.
+\end{remark}
+
+\full{
+\begin{remark}
+A protocol $\Pi$ as above can be trivially turned into a one-round
+secure two-party protocol for the function $U(\cdot,\cdot)$. In
+this protocol the client (on input $x$) sends $pk,c$ to the server,
+the server (on input $P$) responds with $c'$, and the client
+recovers the output $U(P,x)$. The protocol satisfies a strong
+simulation-based security definition which strengthens standard
+definitions of secure computation from the literature
+(e.g.,~\cite{canetti01,Goldbook}) in that it does not impose an a-priori
+polynomial relation between the lengths of the two inputs and the
+security parameter.
+%\footnote{In the definitions from~\cite{Goldbook}
+%it is assumed that both inputs have the same length, and the
+%security parameter is taken to be this input length. In the
+%definitions of~\cite{canetti01} the running time of the honest parties
+%is bounded by a fixed polynomial in the security parameter,
+%effectively imposing a similar bound on the input length.}
+%See Appendix~\ref{app-mpc} for a formalization of this notion.
+\end{remark}
+}
+
+%\begin{remark}{\bf (On the notion of size hiding)}
+%Our definition of size hiding (Definition~\ref{def-sizehiding})
+%requires the length of the server's input to remain secret, but
+%does not impose a similar secrecy requirement on the length of
+%the client's inputs. In an Appendix we show that it
+%is generally impossible to simultaneously hide the length of
+%both inputs, implying that our notion of size hiding is in a
+%sense the strongest possible. Still, for some useful and
+%nontrivial functions such as set membership (testing the
+%membership of a string $x$ held by the client in a set $y$ held
+%by the server) we can simultaneously achieve size hiding for
+%both inputs.
+%\end{remark}
+
+\subsection{Oblivious transfer} \label{sec-ot} It will be
+convenient to present our main protocol in a modular way, using a
+variant of one-round Oblivious Transfer ($\ot$)~\cite{Ra,EGL} as a
+subprotocol. To this end it will be necessary to rely on a stronger
+server privacy property than the one implied by standard definitions
+of \otns. As before, we focus here on the case of a semi-honest client
+and postpone the treatment of malicious clients to
+Section~\ref{sec-malicious}.
+% or the
+%definition from Section~\ref{sec-clientserver}.
+
+A standard one-round OT protocol involves a server, holding a list of
+$t$ secrets $(s_1,s_2,$ $\ldots,s_t)$, and a client, holding a
+selection index $i$. The client sends a query $q$ to the server, who
+responds with an answer $a$. Using $a$ and its random input, the
+client should be able to recover $s_i$. The standard security
+requirements include {\em client privacy}, requiring that $q$ keep
+$i$ hidden from the server, and {\em server privacy,} requiring that
+$a$ keep all secrets other than $s_i$ hidden from the client. Note
+that the latter server privacy requirement does not rule out the
+possibility that $a$ reveals information about the query $q$ which is
+not implied by the output $s_i$ alone. (In fact, $a$ can include the
+entire query $q$ without violating server privacy.) This might
+compromise the security of our main protocol, in which the client
+issues multiple OT queries and each query is used by the server to
+compute multiple answers. It will be crucial for the security of the
+protocol that the client be unable to correlate answers with queries,
+beyond correlations which follow from the outputs. Such correlations
+will reveal to the client information about the structure of the
+server's branching program.
+
+Roughly speaking, our notion of strong OT strengthens the above
+server privacy requirement by requiring the distribution of the
+answer $a$  conditioned on the output $s_i$ to be independent of the
+query $q$. In other words, the distribution of the answer depends on
+the output (and the public key) alone. It turns out that a natural
+implementation of one-round \otns based on additively homomorphic
+encryption~\cite{KO97,Ste98} satisfies the required properties (see
+Section~\ref{sec-otimp}). We now formally define strong \otns.
+
+\begin{definition}[Strong OT]
+\label{def-ot} A {\em strong OT} protocol is defined by a tuple of
+PPT algorithms $(\genot,\queot,\ansot,\decot)$. The protocol
+involves two parties, a client and a server, where the server's
+input is a $t$-tuple of strings $(s_1,\ldots,s_t)$ of length $\otl$
+each, and the client's input is an index $i\in[t]$. The parameters
+$t,\otl$ are given as inputs to both parties. The protocol proceeds
+as follows:
+\begin{itemize}
+\item The client generates $\samp{(pk,sk)}{\genot(1^k)}$, computes a
+query $\samp{q}{\queot(pk,1^t,1^\otl,i)}$, and sends $(pk,q)$ to the
+server.
+\item  The server computes $\samp{a}{\ansot(pk,q,s_1,\ldots,s_t)}$
+and sends $a$ to the client.
+\item  The client computes and outputs $\decot(sk,a)$.
+\end{itemize}
+We require that if both parties follow the protocol, the client
+always outputs $s_i$. We denote the length of the query $q$ by
+$\alpha(k,t,\otl)$ and the length of the answer $a$ by
+$\beta(k,t,\otl)$.
+\end{definition}
+Our main protocol will require $\beta(k,t,\otl)=\otl+\poly(k,t)$ to
+efficiently accommodate BPs of arbitrary length. (In fact, it
+suffices that the above holds for $t=2$.) This will be our default
+efficiency requirement. However, this requirement can be relaxed if
+one settles for weaker forms of our main result that apply to
+shallow BPs, such as constant-length BPs over a polynomial-size
+input alphabet.
+%(with perfect server privacy in the {\em semi-honest} setting),
+%and suggest various optimizations on this specific
+%instantiation, which satisfies exactly this property.
+%Nevertheless, our main protocol can essentially be constructed
+%from any homomorphic cryptosystem, while DJ is the only known
+%cryptosystem with additive expansion factor (e.g
+%El-Gammal,Paillier), the typical expansion factor is a
+%multiplicative constant, or even $O(k)$ (~\cite{GM}). For
+%example, when $\ell$ is constant, we can cope with any $\beta$,
+%so the protocol may be based on weaker cryptosystems, which may
+%be beneficial in various applications.
+
+We now define the client privacy and (strong) server privacy
+requirements.
+%Both requirements follow the
+\begin{definition}[Strong OT: client privacy]
+We require that the client's query $q$ keep $i$ semantically secure.
+That is, the advantage of any PPT adversary $\adv$ in the following
+game is negligible in the security parameter $k$:
+\begin{itemize}
+\item $\adv$ is given $1^k$ and generates $1^t, 1^\otl$ and
+$i_0,i_1$ such that $i_0,i_1\in{[t]}$.
+\item Let $\usamp{b}{\bools}$, $(pk,sk)\from \genot(1^k)$,
+and $q\from \queot(pk,1^t,1^\otl,i_b)$.
+\item $\adv$ is given the challenge $(pk,q)$ and outputs a guess
+$b'$ for $b$.
+\end{itemize}
+The advantage of $\adv$ is defined as $\prob{b=b'}-1/2$.
+\end{definition}
+Our strong variant of perfect server privacy is defined similarly to
+Definition~\ref{def-serverprivacy}.
+\begin{definition}[Strong OT: server privacy]
+\label{def-ot-serv-priv} There exists an expected polynomial time
+simulator $\simot$ such that the following holds. For every
+$k,t,\otl$, $i\in[t]$, pair $(pk,q)$ that can be generated by
+$\genot,\queot$ on inputs $k,t,\otl,i$, and strings
+$s_0,\ldots,s_{t-1}\in\{0,1\}^\otl$, the distributions
+$\ansot(pk,q,s_1,\ldots,s_t)$ and $\simot(pk, 1^t, s_i)$ are
+identical.
+\end{definition}
+
+%This condition is sufficient (and seemingly necessary) for providing
+%statistical server privacy (Definition~\ref{def-serverprivacy}) of
+%our main protocol. In fact, we will show an implementation of strong
+%\ot satisfying the above definition with identical distributions
+%(rather then $\eps$-close) in the above experiments, if we allow the
+%algorithms involved to run in expected polynomial time.
+%Consequently, basing our protocol on such an \ot will also provide
+%perfect server privacy of our main protocol, when, again, we allow
+%expected polynomial running time. Therefore, for simplicity of
+%exposition, from now on, we will use the above definition with
+%perfect indistinguishability, and all algorithms are assumed to run
+%in expected polynomial time unless stated otherwise.
+%
+%%\paragraph{}
+%We note that this definition isn't directly implied by
+%definition Definition~\ref{def-serverprivacy}. For instance, in the
+%weaker `common' server privacy definition, the simulator $M$
+%in $\ideal(k)$ also accepts $i$ and outputs $r_M$ instead of $r$,
+%effectively allowing the answer to depend on the client's
+%randomness. Intuitively, we need this extra property since the
+%client in our protocol doesn't know the randomness/position of the
+%selected value at internal \bp nodes, so we require that the \ot doesn't reveal
+%them.
+
+%%\paragraph{}
+%By default, we require $\beta(k,t,l)=l+poly(k,t)$, to allow
+%efficient client work and communication for arbitrary \bp
+%$\length$. We will later present an implementation of this
+%primitive using the Damgard-Jurik homomorphic cryptosystem.
+%(with perfect server privacy in the {\em semi-honest} setting),
+%and suggest various optimizations on this specific
+%instantiation, which satisfies exactly this property.
+%Nevertheless, our main protocol can essentially be constructed
+%from any homomorphic cryptosystem, while DJ is the only known
+%cryptosystem with additive expansion factor (e.g
+%El-Gammal,Paillier), the typical expansion factor is a
+%multiplicative constant, or even $O(k)$ (~\cite{GM}). For
+%example, when $\ell$ is constant, we can cope with any $\beta$,
+%so the protocol may be based on weaker cryptosystems, which may
+%be beneficial in various applications.
+In the following it will sometimes be convenient to index the
+server's inputs $s_i$ by $0,1,\ldots,(t-1)$ instead of
+$1,2,\ldots,t$.
+%This will be
+%understood from the context.
+
+
+\section{Main protocol}
+\label{sec-main}
+
+In this section we will describe our main protocol for evaluating
+branching programs on encrypted data.  The protocol will provide
+client privacy, along with size hiding server privacy in the
+semi-honest model. Extensions that achieve server privacy in the
+malicious model will be presented in Section~\ref{sec-malicious}.
+
+We fix a polynomially bounded length function $\ell(\cdot)$, and
+assume that if the client's input $x$ is of length $n$, then the
+server's BP $P$ is of length $\ell(n)$. (To conform to our general
+definition of representation models, one may define $P(x)=0$ for $P$
+and $x$ that do not match.) We also view the input domain $I$ and
+output domain $O$ as being implicitly determined by $n$.  However,
+in the following it will be convenient to view $\ell$, $|I|$, and
+$|O|$ as  separate parameters which are given to both parties, and
+analyze the complexity of the protocol as a function of these
+parameters.  We will also assume that $P$ is layered (see
+Definition~\ref{def-layered}). As discussed in
+Section~\ref{sec-prel-models}, every BP can be efficiently transformed
+into an equivalent layered BP without increasing its length.
+
+Our protocol is based on a strong OT protocol as defined in
+Section~\ref{sec-ot} and proceeds roughly as follows.  (For
+simplicity, assume that the input domain $I$ of $P$ is binary and
+that every nonterminal node in the graph has outdegree 2.) The
+client generates, for every input variable $x_i$ and level $j$, an
+OT query $q^j_i$ corresponding to a selection of the $x_i$-th
+string out of a pair of strings of an appropriate length. (This
+length will depend on $j$ and will be later understood from the
+context.) The $\ell n$ queries $q^j_i$ jointly form the encryption
+$c$ of $x$.
+
+To evaluate $P$ on $c$, the server makes a bottom-up pass on $P$,
+starting with the terminal nodes $T$ and ending with the initial
+node $v_0$. This pass labels each node $v$ in the graph by an OT
+answer which encrypts the output value to which $x$ leads from this
+node. The pass consists of  $\ell+1$ iterations, where in iteration
+$j$ ($0\le j\le \ell$) all nodes of height $j$ are handled. In
+iteration 0 every terminal node $v$ is labeled by the corresponding
+output value $\psi_V(v)$. At the onset of the $j$-th iteration,
+$j\ge 1$, all nodes of height $j-1$ have already been labeled. For
+each node $v$ of height $j$, we want the labeling of $v$ to encrypt
+the label of the child of $v$ to which $x$ leads. Such a label is
+computed by using the OT answering algorithm as follows. Suppose
+that the children of $v$ are $v_0$ and $v_1$, where $P$ branches
+from $v$ to $v_b$ if $x_i=b$. The label of $v$ then computed by
+applying the OT answering algorithm to the query $q^j_i$ on the pair
+of strings $(\lab(v_0),\lab(v_1))$. Note that since $P$ is layered,
+the two labels have the same length. Moreover, by the strong server
+privacy property of the OT protocol, the label of $v$ can be viewed
+as an encryption of the label of the selected child $v_{x_i}$. In
+particular, this label does not contain any information about the
+identity of the variable $x_i$ that was used to determine the
+selection. (If a standard one-round OT is used, this is not
+necessarily be the case.)
+the
+Finally, at the end of iteration $\ell$, the initial node $v_0$ is
+labeled by an OT answer which can be viewed as an (iterated)
+encryption of the output value $P(x)$. The client decrypts $P(x)$
+by applying the OT decryption algorithm $\ell$ times to the label
+of $v_0$.
+
+%\subsection{Semi-honest setting}
+\protocol{Main Protocol}{Evaluating a branching program on encrypted
+data}{fig-main}{
+\begin{itemize}
+\item{Common inputs:} security parameter $1^k$, a branching program
+length parameter $1^{\ell}$, input domain $I=\{0,1,\ldots,t-1\}$,
+output domain $O=\{0,1\}^\gamma$.
+%\footnote{To fit the framework of computing on encrypted data,
+%we think of $\ell(n),\size{I},\size{O}$ as part of the model definition}.
+\item{Client input:} an assignment $x=(\commvars)\in{I^n}$.
+\item{Server input:} a layered BP $P =
+(G(V,E),v_0,T,\psi_V,\psi_E)$ of length $\ell$.
+\item{Sub-protocol}: a strong OT
+protocol $(\genot,\queot,\ansot,\decot)$ with answer length
+$\beta(k,t,\otl)$.
+\end{itemize}
+\begin{enumerate}
+\item {\bf Setup} $\gen(1^k)$:
+\begin{itemize}
+\item Let $\samp{(pk,sk)}{\genot(1^k)}$.
+\item Return $(pk,sk)$.
+\end{itemize}
+\item {\bf Encryption} $\enc(pk,x)$:
+\begin{itemize}
+\item For $1\leq i \leq n$, generate a
+vector $q_i=(q_i^1,\ldots,q_i^\ell)$,
+where $q_i^j$ is obtained by:
+\[q_i^j\from \queot(pk, 1^t, 1^{\beta_j}, x_i),\]
+and where the lengths $\beta_j$ are defined by
+$\beta_1=\log\size{O}$ and  $\beta_{j+1}=\beta(k,t,\beta_j)$.
+\item Return $c=(\vars{q}{n})$.
+\end{itemize}
+\item {\bf Evaluation} $\eval(1^k,pk,c=(q_i^j),P)$:
+% Make a bottom-up pass on $P$ in the following manner:
+\begin{itemize}
+\item Initialization:
+for each $v\in{T}$ set $\lab(v) \leftarrow{\psi_V(v)}$.
+\item
+While $v_0$ is not labeled:
+\begin{itemize}
+\item Pick an unlabeled node $v\in{V-T}$ such that all its
+children are labeled.
+\item Let $i\from\psi_V(v)$ and $h\from\height(v)$.
+\item Let
+$\lab(v)\from \ansot(pk,q_i^h,
+\lab(u_0),\ldots,\lab(u_{t-1}))$,
+where $u_m$ is the (unique) node such that $m\in{\psi_E(v,u_m)}$.
+\\Note that the nodes $u_m$ are not necessarily distinct.
+\end{itemize}
+\item Return $c'=\lab(v_0)$.
+\end{itemize}
+\item {\bf Decryption} $\dec(sk,c')$:
+\begin{itemize}
+\item Let $d_\ell\from c'$.
+\item For $j=\ell$ down to 1,
+let $d_{j-1}\from\decot(sk, d_j)$.
+\item Return $d_0$.
+\end{itemize}
+\end{enumerate}
+}
+
+The above protocol is formally described in Figure~\ref{fig-main}.
+Its correctness is implied by the following lemma, which can be
+easily proved by induction on the height $h$.
+\begin{lemma}
+\label{lem-correct} For any node $v$, let $P_v(x)$ denote the output
+of $P$ on the input $x$ if $v$ is used as the initial node.  Then,
+for every $0\le h\le \ell$ and every node $v$ of height $h$ we have
+$\decot^{(h)}(sk,\lab(v))=P_v(x)$, where $\decot^{(h)}(sk,\cdot)$
+denotes the $h$-th iterate of $\decot(sk,\cdot)$.
+\end{lemma}
+In particular, $\decot^{(\ell)}(sk,\lab(v_0))=P(x)$, from which
+correctness follows. We turn to analyze protocol's efficiency.
+
+\paragraph{Efficiency.} Recall that we denote the length of an OT query by
+$\alpha(k,t,\otl)$ and the length of an OT answer by
+$\beta(k,t,\otl)$. Let $\beta_j$ be as defined in Step 2, namely the
+result of applying the $j$-th iterate of $\beta(k,t,\cdot)$ on
+$\log|O|$. The length of the encryption $c$ computed by the client
+is then bounded by $\ell n\cdot\alpha(k,t,\beta_\ell)$ and the
+length of the ciphertext $c'$ computed by the server is
+$\beta_{\ell+1}$. By default, we assume the strong OT implementation
+to be such that $\beta(k,t,\otl)=\otl+\poly(k,t)$. (See
+Section~\ref{sec-otimp} for a concrete implementation using the
+Damg{\aa}rd-Jurik cryptosystem.) In such a case, the overall
+communication is $\poly(k,n,\ell)$, which is in particular
+independent of $|P|$ as required.  We will later present an
+optimized instantiation of the main protocol with a total
+communication of $O(kn\ell)$ (for the case of binary inputs and
+outputs). Finally, the computation performed by each party is
+polynomial in the length of its input.
+
+\begin{remark}
+\label{rem-shallow}
+When $\ell(n)\ll n$, the requirement that
+$\beta(k,t,\otl)=\otl+\poly(k,t)$ can be relaxed. In particular, if
+$\ell(n)=O(\log n)$ it suffices that
+$\beta(k,t,\otl)=O(\otl)+\poly(k,t)$. A strong OT protocol with the
+latter efficiency requirement can be based on additively homomorphic
+cryptosystems which expand the ciphertext length by a constant
+factor, such as El-Gamal (see Section~\ref{sec-otimp}). If
+$\ell(n)=O(1)$, we can rely on an arbitrary strong OT, which in
+turn can be based on an arbitrary additively homomorphic encryption scheme
+(including, for instance, the Goldwasser-Micali
+cryptosystem~\cite{GM}).
+\end{remark}
+
+\begin{remark}
+The PIR protocol of Kushilevitz and Ostrovsky~\cite{KO97} can be
+viewed as an instance of our construction in which $\ell$ is set to
+some constant $d$, the input domain $I$ is of size $t=N^{1/d}$
+(where $N$ is the database size), and the database is represented
+as a complete decision tree of depth $d$ and degree $N^{1/d}$. Its
+variant suggested in~\cite{Ste98} (resp.,~\cite{L04}) corresponds
+to a decision tree of depth $\sqrt{\log N}$ and degree
+$t=2^{\sqrt{\log N}}$ (resp., depth $\log N$ and degree $t=2$).
+These three depth parameters correspond to the different BP length
+regimes discussed in Remark~\ref{rem-shallow}.
+\end{remark}
+
+We turn to prove the security properties of the main protocol. In
+the following we assume that the given strong OT subprotocol is
+secure and that its answer complexity is
+$\beta(k,t,\otl)=\otl+\poly(k,t)$. In Section~\ref{sec-otimp} we
+will show that this assumption is implied by the DCRA assumption.
+
+\begin{theorem}\label{thm-semihonest}
+The protocol described in Figure~\ref{fig-main} provides client
+privacy according to Definition~\ref{def-clientprivacy} as well as
+perfect size hiding server privacy in the semi-honest model
+according to Definition~\ref{def-sizehiding}.
+\end{theorem}
+\begin{proof}
+Client privacy readily follows from the client privacy requirement
+in the underlying OT protocol. The security of sending polynomially
+many strong OT queries under the same key follows from the security
+of encrypting multiple messages under the same key in public-key
+encryption schemes (see \cite{Goldbook}, Theorem 5.2.11).
+
+To prove size hiding server privacy, we describe a perfect simulator
+$\sim$. The idea is to recreate the labels of the computation path
+from $v_0$ to a terminal node labeled with $P(x)$ without knowing
+the nodes traversed by the path. $\sim$ will use the OT simulator
+$\simot$ as a subroutine. On inputs $(1^k,1^{|x|},pk,P(x))$ (and
+given $|I|=t$ as an additional public input), $\sim$ proceeds as
+follows:
+\begin{itemize}
+\item Let $\ell\from\ell(|x|)$, $\lambda_0\from P(x)$.
+\item For $j=1$ to $\ell$, let
+$\lambda_j\from\simot(pk,1^t,\lambda_{j-1})$.
+\item Return $\lambda_\ell$.
+\end{itemize}
+Consider the computation path $v_0,v_1,\ldots,v_\ell$ induced by
+$x$. It follows by induction on $j$ that the distribution of
+$\lambda_j$ produced by $\sim$ is identical to the distribution of
+$\lab(v_{\ell-j})$ produced by $\eval(1^k,pk,c,P)$, for every
+$k,x,P$ and pair $(pk,c)$ which can be generated by $\gen,\enc$ on
+$k,x$. In particular, the simulator's output $\lambda_\ell$ is
+distributed identically to $c'=\lab(v_0)$. Note that the strong OT
+requirement allows $\simot$ to produce the correct distributions
+independently of the OT queries included in $c$.
+\end{proof}
+
+\subsection{Implementing strong OT}
+\label{sec-otimp}
+
+Our concrete implementation of strong OT is based on the
+Damg{\aa}rd-Jurik (DJ) additively homomorphic public-key
+cryptosystem~\cite{DJ01}, which generalizes Paillier's
+cryptosystem~\cite{Pai}. It is suitable for our needs because it
+allows us to encrypt a group element of length $\otl$ into a
+ciphertext of length $\otl+O(k)$, where $k$ is a security
+parameter. This efficiency feature is unique among all known
+additively homomorphic encryption schemes and is needed for our main protocol
+to be efficient for arbitrary length bounds $\ell(n)$. The semantic
+security of the DJ cryptosystem
+%for any $1\le e(k)\le\poly(k)$
+follows from the Decisional Composite Residuosity Assumption
+(DCRA)~\cite{DJ01}.
+
+We now describe the main properties of the DJ cryptosystem that are
+useful for our purposes (see~\cite{DJ01} for further details).
+\begin{itemize}
+\item{\sc Key generation:} Given a security parameter $k$,
+$\gendj(1^k)$ outputs a secret key $(p_1,p_2)$, where $p_1,p_2$ are
+random $k$-bit primes (i.e., $2^{k-1}\le p_1,p_2<2^k$), and a
+public key $N=p_1p_2$. The above choice of $p_1,p_2$ guarantees
+that $gcd(N,\phi(N))=1$. This property will be useful in what
+follows. We refer to $N$ which can be generated by $\gendj(1^k)$ as
+a {\em valid DJ key}.
+\item{\sc Encryption:} The DJ cryptosystem is length-flexible in the
+sense that every fixed key $N$ allows to encrypt plaintexts of an
+arbitrary (polynomial) length, where the encryption only {\em adds}
+$O(k)$ bits to the length of the plaintext. Given a plaintext
+length parameter $e$, where $1\leq e<\min{(p_1,p_2)}$, we define a
+plaintext group $M_{N,e}=\Z_{N^e}$ and a ciphertext group
+$C_{N,e}=\U{N^{e+1}}$.  The restriction on $e$ is required for
+correct decryption, and since we will only use $e\le\poly(k)$ it
+will always hold.
+% (for sufficiently large $k$).
+%Given $k$, denote the set
+%of valid pairs $(N,e)$ by $Valid_k$.
+Now fix some valid pair $(N,e)$. To abbreviate notation we denote
+the ciphertext group $C_{N,e}=\U{N^{e+1}}$ by $C$. Let
+$C_0=C^{N^e}=\condset{c^{N^e}}{c\in C}$. Clearly, $C_0$ is a
+subgroup of $C$. Let $g=N+1\in C$. The output distribution of the
+encryption is specified via an injective homomorphism
+$\fndef{H}{M_{N,e}}{C/C_0}$
+% (which is clearly a  subgroup of $G$).
+defined by $H(m)=g^m\cdot C_0$, where $g^m\cdot C_0$ denotes the
+coset represented by $g^m$ in $C/C_0$. To encrypt $m\in M_{N,e}$,
+the encryption function $\encdj(m)$ returns a random element in the
+coset $H(m)$. This can be done by sampling $\usamp{r}{\U{N^{e+1}}}$
+and outputting $c=g^m\cdot{r^{N^e}}$, where all multiplications are
+in $C$.\footnote{In the original DJ cryptosystem, $r$ is sampled
+from $\U{N}$. The modification here is introduced in order to
+simplify the analysis of the construction for the malicious
+setting.} In particular, an encryption of $0$ is a random element
+of $C_0$. Note that the difference between the size of the
+ciphertext $\lceil\log (N^{e+1})\rceil$ and the size of the
+plaintext $\lceil\log (N^e)\rceil$ is indeed only $O(k)$.
+
+\item{\sc Decryption:} Given $c=g^m\cdot{r^{N^e}}$ and the
+factorization $(p_1,p_2)$ of $N$, it is possible to efficiently
+decrypt $m$. We denote the decryption algorithm by $\decdj(c)$.
+
+\item{\sc Homomorphism:} Given two ciphertexts $c\in\encdj(m)$
+and $c'\in\encdj(m')$, their product $c\cdot c'$ (in the ciphertext
+group) is a valid encryption of the sum $m+m'$ (in the plaintext
+group). It follows that $c^\rho$ is an encryption of $\rho\cdot m$.
+Moreover, multiplying $c$ by a random encryption of 0 {\em
+rerandomizes} $c$ into a random encryption of $m$.
+%In DJ, they provide a decryption algorithm $D_{(p,q),e}(c)$, which
+%given a valid encryption $c$ of a message $m$ under $(N,e)$, runs in
+%deterministic polynomial time (in $\size{c},k$) and outputs $m$.
+%\begin{fact}\label{fact-dlog}
+%Given $N=p\cdot{q}$,$e<min{(p,q)}$, the discrete-log problem of
+%computing $t$ given $c=g^t\in{G}$ can be efficiently solved.
+%\end{fact}
+%Essentially, $D$ works by computing $c^{\phi(N)}$, obtaining
+%$g^{m\cdot{\phi(N)}}$ (since $G_0$ is isomorphic to $\U{N}$, this
+%projects $c$ onto $(*,0)$), then $c'=m\cdot{\phi(N)}$ is computed by
+%the algorithm from Fact~\ref{fact-dlog}, and $m$ is recovered by
+%multiplying $c'$ by $\phi(N)^{-1}$ (in $\U{N^e}$). See ~\cite{DJ01}
+%for more details.
+\end{itemize}
+
+\paragraph{\bf Strong OT from the DJ cryptosystem.}
+The following strong OT protocol is similar to the PIR protocol
+of~\cite{KO97} and its generalizations
+from~\cite{Ste98,L04}.
+%\footnote{For simplicity we do not use the
+%full recursive scheme of~\cite{KO97}, since typically $\size{I}$ is
+%constant, yet this may be beneficial for large $\size{I}$. An
+%alternative way for handling large $I$ would be to represent each
+%symbol from $I$ by a sequence of several symbols over a smaller
+%alphabet. }
+The choice of DJ as the underlying cryptosystem is
+motivated by the goal of handling branching programs of an
+arbitrary length. If the length function $\ell(n)$ is small, other additively
+homomorphic cryptosystems can be used (see
+Remark~\ref{rem-shallow}).
+\begin{construction}[Strong OT]
+\rm \label{con-otimpl-smh} Let $(\gendj,\encdj,\decdj)$ be the DJ
+cryptosystem. The OT protocol $(\genot,$ $\ansot,\queot,\decot)$
+proceeds as follows.
+\begin{enumerate}
+\item $\genot(1^k)$:
+\begin{itemize}
+\item Let $(N,(p_1,p_2))\from\gendj(1^k)$.
+\item Return $(N,(p_1,p_2))$.
+\end{itemize}
+\item $\queot(N,1^k,1^t,1^{\otl},i)$:
+\begin{itemize}
+\item Let $e$ be the minimal integer such that $N^e > 2^\otl$. We
+naturally identify strings in $\{0,1\}^\otl$ with integers in
+$M_{N,e}=\Z_{N^e}$, and assume that elements in the groups
+$M_{N,e}$ and $C_{N,e}$ are padded so that their representation
+reveals $e$.
+\item Let $q_i\from\encdj(1)$ and $q_j\from\encdj(0)$ for all
+$j\in[t]\setminus i$.
+\item Return $q=(q_1,\ldots,q_{t-1})$.
+\end{itemize}
+\item $\ansot(N,q,\opbrange{s_1}{s_t})$:
+\begin{itemize}
+\item Infer $e$ from $q$.
+\item Let $q_t\from\encdj(1)\cdot
+(\prod_{i=1}^{t-1}{q_i^{s_i}})^{-1}$ (where all operations are in
+$C_{N,e}$).
+\item Let $a\from\prod_{i=1}^t q_i^{s_i}\cdot\encdj(0)$.
+\item Return $a$.
+\end{itemize}
+\item $\decot((p_1,p_2),a)$:
+\begin{itemize}
+\item Infer $e$ from $a$.
+\item Return $\decdj(a)$.
+\end{itemize}
+\end{enumerate}
+\end{construction}
+
+\paragraph{Analysis.} Correctness follows by observing that
+$(q_1,\ldots,q_t)$ encrypt the $i$-th unit vector of length $t$ and
+$a$ encrypts the inner product of $(s_1,\ldots,s_t)$ with this
+vector, which yields $s_i$. Client privacy follows from the
+semantic security of the DJ cryptosystem, which can be based on the
+DCRA assumption~\cite{DJ01}. Server privacy follows from the fact
+that (due to rerandomization) the server's answer on any valid $q$
+is a {\em random} encryption of $s_i$, which can be easily
+generated by $\simot$. The protocol's query length is
+$\alpha(k,t,\otl)=t\cdot (\otl+O(k))$ and its answer length is
+$\beta(k,t,\otl)=\otl+O(k)$.
+
+\subsection{Optimizations}
+\label{sec-opt}
+
+\paragraph{Optimizing the server's work.} Our main protocol
+requires the branching program $P$ to be layered. Converting an
+arbitrary BP to an equivalent layered BP of the same length may
+generally result in a quadratic blowup to its size, which in turn
+results in a quadratic computational overhead on the server's part.
+(We note, however, that most ``natural'' BPs, including ones that
+arise from other computation models such as finite automata, are
+either already layered or can be turned into equivalent layered BPs
+with only a linear overhead.) The quadratic overhead can be easily
+avoided in general if only client privacy is required. The main
+protocol can be modified in this case to operate on a non-layered
+BP by padding the labels that serve as OT inputs to match the size
+of the longest label.
+
+\paragraph{Optimizing the encryption length.} In the main protocol,
+the length of the encryption $c$ produced by $\enc$ must be bigger
+than $\sum_{j=1}^\ell \beta_j > \ell^2$. It turns out that the
+quadratic dependence on $\ell$ can be avoided by exploiting the
+specific structure of the DJ cryptosystem. The improvement is based
+on the following observation:
+
+\begin{observation}
+\label{obs-short} For every valid DJ key pair $(N,e)$, $e'<e$,
+$m\in M_{N,e}$ and $c\in{E_{N,e}(m)}$ (i.e., $c$ is some valid
+encryption of $m$) it holds that \[ c\mod N^{e'+1} \in
+E_{N,e'}(m\mod N^{e'}).\]
+\end{observation}
+It follows from Observation~\ref{obs-short} that the ciphertext $c$
+may consist of $n$ encryptions $q_i$ in the largest group (rather
+than $n$ encryptions $q_i^j$ for every level $j$ of the BP), since
+the server can convert encryptions from the largest group into
+encryptions from smaller groups. (Note that since we only encrypt
+0's and 1's, the conversion does not modify the encrypted value.)
+The improved implementation achieves communication complexity of
+$O(kn\ell)$ bits from the client to the server (instead of
+$O(kn\ell^2)$ in the original implementation) and $O(k\ell)$ bits
+from the server to the client (as in the original implementation).
+Clearly, the optimization does not compromise client or server
+privacy. Thus, we have:
+
+\begin{theorem}
+Assuming DCRA~\cite{DJ01}, there is a protocol for evaluating a
+binary branching program of length $\ell$ and of arbitrary size on
+an encrypted input of length $n$, with a total communication of
+$O(kn\ell)$ bits (where $k$ is a security parameter). The protocol
+provides client privacy, as well as size hiding server privacy in
+the semi-honest model.
+\end{theorem}
+
+%\paragraph{}Communication could be ideally improved
+%to $O(n\cdot{k})$, if the encryptions the client sends
+%can be safely compressed to $O(k)$ bits, which is the
+%amount of 'entropy' in them. That is, the result of
+%`compressing' a message $m$, leaves it semantically
+%secure. However, there is evidence in recent work
+%indicating that this it is a hard task.
+%Specifically, ~\cite{L04} shows that ~\cite{DJ01} are not
+% `succinct' (the term `succinct' is precisely
+% defined in ~\cite{L04}).
+
+\begin{remark}{\bf A generalization.}
+In the standard definition of branching programs, terminal nodes
+are labeled by fixed output values. Our main protocol can be
+generalized in a straightforward way to evaluate a more general
+class of branching programs, whose terminal nodes are labeled by
+functions of the input which can be efficiently evaluated on
+encrypted data. (The output of such a branching program is simply
+the output of the function labeling the terminal node reached by
+the computation path.) For instance, using the BGN
+cryptosystem~\cite{BGN} the main protocol can be generalized, with
+no asymptotic efficiency overhead, to evaluate branching programs
+whose terminal nodes are labeled by degree-2 polynomials or 2-DNF
+formulas in the inputs.
+\end{remark}
+
+
+\section{Handling malicious clients}
+\label{sec-malicious}
+
+In this section we describe the required modifications for
+achieving security against malicious clients.
+%For lack of space we
+%only describe the high level ideas and refer the reader to the full
+%version for further details.
+For simplicity, we restrict the
+attention throughout this section to the case of branching programs
+over binary inputs.
+
+We start by observing that a malicious client can easily break the
+server privacy of the main protocol even if it honestly generates
+the public key $pk$.
+
+\begin{example}
+\label{ex-simpleattack} Consider a client who sends an encryption
+of 2 (instead of 0 or 1) as an OT query. In this OT invocation, the
+client can recover both $s_0$ and $s_1$. This potentially reveals
+additional information about the structure of the branching program
+$P$. For instance, in the degenerate case where $P$ consists of an
+initial node and two terminal nodes, the client will learn the
+values of both terminal nodes.
+\end{example}
+
+The above mild form of cheating is relatively easy to handle using
+previous techniques~\cite{GIKM,AIR01,L05} and will be addressed in
+Section~\ref{sec-trusted}. A more challenging goal is to handle
+clients that are also free to choose invalid public keys $pk$. This
+scenario will be addressed in Section~\ref{sec-fullmalicious}.
+
+Before describing our solutions, we formalize our notions of server
+privacy in the malicious model. The following definitions modify
+Definition~\ref{def-sizehiding} in that they allow an unbounded
+simulator to extract an effective input $x^*$ from a corrupted
+ciphertext $c^*$ and a (possibly) corrupted public key $pk^*$. The
+use of unbounded simulation seems necessary in the ``vanilla''
+one-round malicious model (i.e., without setup assumptions) and was
+previously made in similar
+contexts~\cite{NP01,AIR01,FIPR05,T05,L05}. On the other hand, the
+type of server privacy we realize is stronger than the traditional
+one in that it holds with respect to computationally unbounded
+clients. Thus, we get a pure form of ``information-theoretic''
+server privacy.
+
+We start by defining the {\em trusted setup model}, where the
+client is forced to use a valid public key $pk$ but can cheat by
+creating invalid ciphertexts $c^*$. This model is motivated by the
+fact that the same public key may be reused to encrypt many
+different inputs. Thus, one can afford an expensive certification
+procedure (e.g., using interactive zero-knowledge proofs or a
+trusted party) that is used once and for all.
+
+\begin{definition}[Size hiding server privacy: trusted setup model]
+\label{def-trustedsetup} Let $\Pi=(\gen,\enc,$ $\eval,\dec)$ be a
+protocol for evaluating programs from a representation model
+%$\fndef{U}{\bools[*]\times\bools[*]}{\bools[*]}$
+$U$ on encrypted data. We say that $\Pi$ has {\em statistical size
+hiding server privacy in the trusted setup model} if there exists a
+computationally unbounded, randomized algorithm $\sim$ and a
+negligible function $\eps(\cdot)$ such that the following holds.
+For every security parameter $k$, valid public key $pk$ that can be
+generated by $\gen(1^k)$, and arbitrary ciphertext $c^*$ there
+exists an ``effective'' input $x^*$ such that for every program
+$P\in\{0,1\}^*$, we have
+\[ \SD(\eval(1^k,pk,c,P)\,,\,\sim(1^k,
+pk, c^*, U(P,x^*))) \le \epsilon(k). \]
+The case of {\em  computational} server privacy is defined in an
+analogous way (see Definition~\ref{def-serverprivacy}),
+where statistical indistinguishability is
+replaced by computational one.
+%  (yet the simulator is still allowed
+% to be unbounded).
+\end{definition}
+We turn to the fully malicious model.
+\begin{definition}[Size hiding server privacy: fully malicious model]
+\label{def-fullymalicious} We say that $\Pi$ has (statistical or
+computational) {\em size hiding server privacy in the fully
+malicious model} if it satisfies Definition~\ref{def-trustedsetup}
+with the following modification: instead of quantifying over all
+{\em valid} public keys $pk$, now the quantification is over
+arbitrary public keys $pk^*$.
+\end{definition}
+
+Protocols for computing on encrypted data in the above model give
+rise to one-round (two-message) protocols for secure two-party
+computation of $U(\cdot,\cdot)$ under a relaxed security definition
+as in~\cite{NP01,AIR01,FIPR05}.
+%See Appendix~\ref{app-mpc} for the relevant definitions.
+
+%Note that in contrast to the semi-honest or trusted setup models,
+%where $\eval$ could infer $k$ from $pk$, here it is necessary to
+%provide a security parameter to $\eval$ as an input.
+
+A natural approach for handling malicious clients would be to leave
+the main protocol as it is and only upgrade the original strong OT
+primitive into one that achieves security against malicious clients.
+Unfortunately, we cannot use this modular approach for several
+reasons. First, the basic variant of the protocol requires the client
+to use each input $x_i$ in multiple OT invocations (corresponding to
+the different levels where $x_i$ appears) and so the client could
+cheat by simply using inconsistent inputs in these OT invocations.
+%More importantly,
+%we do not know how
+Second, it is not straightforward to construct a strong OT protocol
+which simultaneously satisfies both our security and efficiency
+requirements in the malicious model. It is interesting to note that
+a one-round OT protocol of Kalai~\cite{T05}, which is based on
+Paillier's cryptosystem and can be generalized to work with the DJ
+cryptosystem, fails with respect to both security (in that it is
+not a {\em strong} OT) and efficiency (in that its answer
+significantly blows up the length of the selected string). Still,
+ideas from~\cite{T05} will be very instrumental in our solution for
+the fully malicious model.
+
+%\subsection{Algebra Background}
+%\label{sec-algebra}
+
+
+\subsection{Trusted setup model}
+\label{sec-trusted}
+
+We now describe a solution in the trusted setup model. Our starting
+point is the optimized instantiation of the protocol for the
+semi-honest model (Section~\ref{sec-opt}), where in the case of
+binary inputs ($t=2$) the client sends a single encryption for each
+input. Our goal is to prevent the type of attack described in
+Example~\ref{ex-simpleattack}, namely to ensure that each
+encryption sent by the client is indeed an encryption of 0 or 1. To
+this end one could employ general-purpose zero-knowledge proofs,
+forcing the client to prove that its queries are well formed.
+However, this approach requires either multiple rounds of
+interaction or setup assumptions which we would like to avoid, and
+also involves a considerable efficiency overhead.
+
+Instead, we apply the conditional disclosure of secrets (CDS)
+methodology of~\cite{GIKM,AIR01}. The idea is that instead of
+making the client prove that its queries are well formed, it
+suffices for the server to disclose its answer $c'$ to the client
+only under the condition that the queries are well formed. Using
+the homomorphic property of the encryptions, the latter conditional
+disclosure can be done without the server even knowing whether the
+condition is satisfied.
+
+The original CDS solutions from~\cite{AIR01}  relies on additively homomorphic
+encryption over groups of a prime order. An efficient extension to
+groups of a composite order was suggested in~\cite{L05}, assuming
+that the order of the group is sufficiently ``rough''. We employ a
+similar extension which avoids the roughness assumption and is
+geared towards the solution in the fully malicious model.
+
+We start by describing the approach of~\cite{AIR01}. The simplest
+setting involves a server holding a (valid) public key $pk$ of an additively
+homomorphic cryptosystem, a ciphertext $c\in E_{pk}(m)$ (presumably
+generated by a client), and a secret $s$. The client holds the
+secret key $sk$ corresponding to $pk$. The goal is for the server
+to send a single (randomized) ciphertext $\mu$ such that: (1) if
+$m=0$ then $s$ can be recovered from $\mu$ using the secret key;
+and (2) if $m\neq 0$ then $\mu$ reveals (almost) no information
+about $s$. The above is referred to as a CDS of the secret $s$
+under the condition $m=0$. As in~\cite{GIKM,AIR01}, a solution to
+this simple CDS problem can be easily extended to CDS under more
+general conditions, involving multiple inputs $m_i$ and general
+predicates over atomic conditions of the form $m_i=b_i$. In
+particular: (1) to disclose $s$ under an atomic condition
+$m_i=b_i$, where $b_i\neq 0$, we divide $c$ by an encryption of
+$b_i$ and then apply CDS under the condition $m_i=0$; (2) to
+disclose $s$ under a disjunction of conditions $C_1\vee C_2$, we
+independently disclose $s$ under $C_1$ and under $C_2$; and (3) to
+disclose $s$ under a conjunction $C_1\wedge C_2\wedge \cdots \wedge
+C_n$, we pick $n$ random shares $s_1,\ldots,s_n$, disclose each $s_i$ under the corresponding condition $C_i$,
+and output also $s'=s\oplus s_1\oplus s_2\oplus\cdots\oplus s_n$. This implies that
+$2n$ invocations of the above atomic CDS primitive are sufficient
+to disclose a secret under the suitable condition here, namely that
+$n$ ciphertexts $c_i$ {\em all} encrypt 0/1 values.
+
+The implementation from~\cite{AIR01} of atomic CDS as above (under
+the condition $m=0$) lets $\mu$ be a random encryption of $s+\rho
+m$, where $\rho$ is a random integer between 1 and the order of the
+plaintext group. Note that $\mu$ can be efficiently computed using
+the homomorphic properties of the encryption. Requirement (1) holds
+because if $m=0$ then $\mu$ encrypts $s+\rho\cdot 0=s$. Requirement
+(2) holds in the case where the plaintext group is of a prime
+order; indeed, in this case if $m\neq 0$ then $\rho m$ is uniformly
+distributed over the plaintext group and can thus be used to hide
+$s$.
+
+The next observation is that even in the case that the plaintext
+group has a composite order, not all is lost. In this case, if
+$m\neq 0$ then $\rho m$ is uniformly distributed over a nontrivial
+subgroup of the plaintext group. If $s$ is chosen uniformly at
+random from the plaintext group, then $s$ will still have at least
+one bit of remaining entropy even when conditioned on $\mu$. This
+residual randomness can be extracted using standard privacy
+amplification techniques. Specifically, to disclose an $l$-bit
+secret we first repeat the above $l+k$ times with independent
+secrets $s_i$, increasing the conditional entropy to $l+k$, and
+then apply an arbitrary strong randomness extractor~\cite{NZ}
+(e.g., a pairwise independent hash function\cite{BBR,ILL,BBCM}) to
+extract $l$ (almost) perfectly secret bits from the partially
+leaked secrets. More explicitly, Following is a statistical version of the CDS, conditioning on $\bigwedge_i(q_i\in E_{N,e}(0)\vee q_i\in E_{N,e}(1))$,
+as we need in our protocol.
+\begin{itemize}
+\item Assume we need to disclose an $l$-bit secret. Pick an $l$-bit value independently at random.
+\item For the ``atomic'' conditions, of the form ``$q_i$ encrypts $b$'', involved, prepare a random secret
+$s_{i,b}\in\set{0,1}^l$ to disclose, and $l+k$ random values $s_{1,i,b},\rho_1,\ldots,s_{l+k,i,b},\rho_{l+k}$ in $\Z_{N^e}$. Pick
+randomness $r$ for the extractor $\text{Ext}$, and send \[(s_{i,b}\oplus \text{Ext}(s_{1,i,b},\ldots,s_{1,i,b},r),r,E_{N,e}(s_{1,i,b})(E_{N,e}(b)q^{-1}_i)^{\rho_1},\ldots,E_{N,e}(s_{l+k,i,b})(E_{N,e}(b)q^{-1}_i)^{\rho_{l+k}}).\]
+\item At the highest level, we disclose $s$ as the secret, by combining outputs of CDS executions as explained above
+to obtain a CDS under the complex condition $\bigwedge_i(q_i\in E_{N,e}(0)\vee q_i\in E_{N,e}(1))$.
+\end{itemize}
+We modify the protocol in Figure~\ref{fig-main} 
+so that it remains server-private in the trusted setup setting. We start with an implementation
+where \strongot is instantiated via DJ as in Construction~\ref{con-otimpl-smh}. We also utilize the optimization where the queries only encrypt values of the $x_i$'s for the highest level (see
+Section~\ref{sec-opt}). The required modification is simply:
+\begin{itemize}
+\item Instead of sending $d_0$ in the clear, as done in Figure~\ref{fig-main}, send $d_0\oplus s$, where $s$ is the secret generated and revealed by the CDS as
+above (or a computational version of it, if settling for computational server privacy), which conditions on the encryptions $q_i$ received are each an encryption of either $0$ or $1$.
+\item Additionally, send the CDS output $\mu$.
+\item The client first recovers $d_0$ from $\mu,d_0\oplus s$, and proceeds as before on $d_0$, to recover the output.
+\end{itemize}
+
+
+The above approach (or the similar approach from~\cite{L05}) solves
+our problem in the trusted setup model. In this case, every
+possible string $c^*$ can be interpreted as a valid ciphertext
+encrypting some message $m$ in the plaintext group $\Z_{N^e}$.
+%(We will soon see why this does not hold in general.)
+(If $c^*$ is not in the ciphertext group $\Z^*_{N^{e+1}}$, which
+can be efficiently recognized, we let $c^*=1$.) Thus, we can use
+the above to disclose the server's answer under the condition that
+the $n$ encryptions produced by the client are well formed. This
+yields a protocol for the trusted setup model
+%whose communication
+%complexity is comparable to that of
+with the same asymptotic communication complexity as the optimized
+version of the original protocol.\footnote{This holds for the case
+of {\em computational} server privacy, where we can afford to
+disclose a short secret $s$ and then encrypt the (long) answer
+using this key. The statistically private variant involves an
+additional multiplicative overhead of $O(\ell)$, as evident from the sketch above. }
+
+\subsection{Fully malicious model}
+\label{sec-fullmalicious}
+
+The solution in the trusted setup model relied on the fact that
+for a valid public key $N$, the DJ cryptosystem is additively homomorphic and
+valid ciphertexts in $\support(\encdj(\Z_{N^e}))$ can be
+efficiently recognized.
+
+%The solution in the trusted setup 1model relied on the fact that for
+%a valid public key $N$, the DJ cryptosystem is homomorphic in the
+%following sense: the output distribution of the encryption $\encdj$
+%on a plaintext $m\in\plaintext{N,e}(=\Z_{N^e})$ is specified via a
+%homomorphism $\fndef{H}{\plaintext{N,e}}{C_{N,e}/C_0}$, where $C_0$
+%is a subgroup of the ciphertext group $C_{N,e}$. That is,
+%$\encdj(m)$ is uniform over $H(m)$. Combined with the fact that
+%valid ciphertexts from $\support(\encdj(\plaintext{N,e}))$ can be
+%efficiently recognized, the construction from
+%Section~\ref{sec-trusted} (excluding the optimization of sending
+%values in the highest group) satisfies server privacy as in
+%Definition~\ref{def-fullymalicious}. (Note that it is not essential
+%for server privacy that $H$ be injective.) If $\encdj$ doesn't have
+%this structure, or if valid ciphertexts cannot be efficiently
+%recognized, nothing is generally guaranteed.
+%Recall $\encdj(m)$ samples a random element
+%$\usamp{r}{\U{N^{e+1}}}$, and outputs $g^mr^{N^T}$. When $N$ is
+%promised to be a valid DJ key, $\encdj$ is clearly a homomorphism
+%with the proper structure, and $\support(\encdj(\Z_{N,e}))$ actually
+%equals $C_{N,e}=\U{N^{e+1}}$, so membership in it easy to decide
+%(therefore, every $c^*$ can be interpreted as a value in
+%$\support(\encdj(\Z_{N,e}))$, e.g, by verifying that it encodes an
+%element in $\U{N^{e+1}}$ according to some fixed reasonable
+%encoding, and if this is not the case, replace it with some $c$ in
+%$\encr{N,e}{0}$). However, things complicate when $N$ is malformed.
+%While the mapping $\encdj(\Z_{N,e})$ indeed has the required
+%properties for arbitrary $N$ (except for possibly an efficiently
+%recognizable set), it is unknown how to efficiently verify that a
+%given $c^*$ is in $\support(\encdj(\Z_{N,e}))$. As we will see,
+%$\support(\encdj(\Z_{N,e}))$ may be a proper subgroup of
+%$\U{N^{e+1}}$, so it's unclear how to impose the restriction on
+%$c^*$, which might be a problem. In fact, we demonstrate an
+%explicit attack, where the client sends a malformed key $N$, along
+%with a carefully selected message $c^*$ in
+%$\U{N^{e+1}}/\support(\encdj(\Z_{N,e}))$, and learns extra
+%information (beyond what is allowed by
+%Definition~\ref{def-fullymalicious}). Such `harmful' pairs $N,c^*$
+%are not known to be efficiently recognized.
+When $N$ is malformed, $\support(\encdj(\Z_{N^e}))$ may be a proper
+subgroup of $\U{N^{e+1}}$,
+%, and it is not known how to efficiently
+%recognize elements of this subgroup.
+and it is not clear how to efficiently restrict ciphertexts $c^*$
+provided by a malicious client to be taken from this subgroup\footnote{We extend $\fndef{E_{N,e}}{\Z_{N^e}}{\Z^*_{N^{e+1}}}$ to denote
+the output of the encryption procedure of DJ to the case of possibly malformed keys in the natural way. That is, we let $E_{N,e}(m)=(N+1)^mr^{N^e}(mod\;N^{e+1})$,
+where $r$ is uniform in $\Z^*_{N^{e+1}}$, without concerning ourselves with the question whether the resulting encryption scheme remains useful and secure.}. In
+fact, we will demonstrate an explicit attack against the protocol
+in Section~\ref{sec-trusted} in which the client sends a malformed
+key $N$, along with a carefully selected malformed ciphertext
+$c^*\in \U{N^{e+1}}\setminus \support(\encdj(\Z_{N^e}))$, and
+learns extra information about the branching program (beyond what
+is allowed by Definition~\ref{def-fullymalicious}). Such
+``harmful'' pairs $N,c^*$ are not known to be efficiently
+recognizable. Our general approach for overcoming this limitation
+is to efficiently transform an arbitrary ciphertext $c$ into a
+different ciphertext $c'$ such that $c'$ maintains the ``useful
+information'' in $c$ when $c$ is well formed, and yet is guaranteed
+to be harmless even when $c$ is malformed.
+
+%Fortunately, it turns out that we can adapt the construction from
+%Section~\ref{sec-trusted} to be secure against malicious , using
+%the specific properties of groups of the form $C=\U{N^{e+1}}$.
+%%Most of the effort will be concentrated on allowing the CDS/\ot constructions handle values
+%%in $\U{N^{e+1}}/\support(\encdj(\Z_{N,e})$ (at large,
+%given $i\in\plaintext{N,e}$ the atomic CDS will reveal
+%the secret conditioned that the input $c$ is in $\encdj(i)$ for $i\in\Z_{N,e}$).
+\medskip
+
+We start with some useful notation and technical lemmas about the structure of
+$\U{N^{e+1}}$.
+
+\paragraph{Notation.} We denote by $\order_G(v)$ the order of an
+element $v$ in a group $G$. When $G$ is omitted it is either the
+default group $\U{N^{e+1}}$ or a different group which is
+understood from the context. For a direct product group
+$G=\opbrange[\times]{G_1}{G_t}$, we denote elements of $G$ by
+$(\opbrange{v_1}{v_t})$, as usual.
+%, and use additive notation for each group $G_i$.
+We denote by $(\opbrange{H_1}{H_t})$, where each
+$H_i$ is a subset of $G_i$, the subset
+$\opbrange[\times]{H_1}{H_t}\subseteq G$. In this notation, we may
+substitute a subset $H_i$ by either the symbol `*', indicating that
+$H_i=G_i$, or by some fixed element $v_i\in G_i$, indicating that
+$H_i=\{v_i\}$. For instance, $(*,*,0)$ denotes the subgroup
+$G_1\times G_2\times \{0\}$. Finally, we let $[N]$ denote the set
+of integers $\set{\opbrange{0}{N-1}}$ and let $\phi(N)$ denote
+Euler's totient function (that is, $\phi(N)=|\U{N}|$). We denote the ``min-entropy''
+of a random variable $X$ with a finite support, by $H_\infty(X)=min_{i\in support(X)}(-\log{Pr(X=i)})$.
+For an event $A$, $H_\infty(X|A)$, denotes the infinity norm of $X$, conditioned that event $A$ occurred.
+We denote $\encdjnr(m)=g^m$, that is, the encryption of $m$ where $r$ is fixed to 1.
+
+\remove{<<<
+We proceed with a few auxiliary algebraic claims used
+in the proofs of the various lemmas.
+
+
+\begin{claim}\label{clm-cnt-sol} 
+Consider the group $\Z_L$, and elements
+$a,b,c\in{\Z_L}$, where the equation $x\cdot{a}+y\cdot{b}=c$ has a
+solution over $[\order(a)]\times{[\order(b)]}$. There are exactly
+$gcd(\order(a),\order(b))$ solutions for the system, and every pair
+of solutions $(x_1,y_1),(x_2,y_2)$ satisfies $x_1\neq{x_2}$, and
+$y_1\neq{y_2}$.
+\end{claim}
+\begin{proof}
+Clearly, the number of solutions equals the number of the solutions
+of the system $xa+yb=0$. Also $xa+yb=0\Leftrightarrow xa=y(-b)$,
+note that $\order(-b)=\order(b)$. For any $v$, such that
+$xa=y(-b)=v$, both $x$, and $y$ are uniquely determined (by the
+definition of order). The set of such elements is in fact the
+intersection group $Sol$ of the groups $<a>,<b>$. Since
+$\size{<a>}=\order(a),\size{<b>}=\order(b)$, the intersection group
+should be of size dividing $gcd(\order(a),\order(b))$ (by Lagrange).
+Next, we show $\size{Sol}$ in fact equals
+$gcd(\order(a),\order(b))$. $\order(x'a)=gcd(\order(a),\order(b))$
+for $x' = \order(a)/gcd(\order(a),\order(b))$, obtaining
+$v_x=x'\cdot a$ of \order $gcd(\order(a),\order(b))$. The same holds
+for $b$, and some $v_y$ of order $gcd(\order(a),\order(b))$. We
+conclude $<v_x>=<v_y>=Sol$, since a cyclic group $\Z_L$ has exactly
+one subgroup of any size $d|N$.
+\end{proof}
+>>>}
+%\begin{fact}
+%\label{fact-phi-express}
+%For an integer $N>1$, given the (unique) factorization of $N$
+%into a product of prime powers $N=\prod^z_{i=1}{p_i}^{d_i}$,
+%$\phi(N)=\size{\U{N}}$, is given by $\phi(N)=\prod^z{p_i}^{d_i-1}(p_i-1)$,
+%\end{fact}
+
+In the following we prove useful facts about the structure of
+$\U{N^{e+1}}$ for arbitrary odd $N$ and positive integers $e$. We
+start by showing that the element $g=N+1$ generates a subgroup of
+size $N^e$ even when $N$ is not a valid DJ public key. For this we
+rely on the following technical lemma.
+\begin{lemma}
+\label{lem-order-g-zp} Let $p$ be an odd prime and $N=q\cdot p^d$
+where $q$ is coprime to $p$ and $d$ is a positive integer. Let
+$g_p=(N+1)\mod p^h$, where $h>d$. Then
+$\order_{\U{p^h}}(g_p)=p^{h-d}$.
+\end{lemma}
+\begin{proof}
+Given $0\leq x\leq h$, let $G_{p,h,x}$ denote the subgroup
+$\condset{ip^x+1}{0\leq i<p^{h-x}}$ of $\U{p^h}$. Since $\U{p^h}$ is
+cyclic (by Fact~\ref{fact-zp-cyc}), any $G_{p,h,x}$ must also be
+cyclic. Clearly, $\size{G_{p,h,x}}=p^{h-x}$. The number of
+generators of $G_{p,h,x}$ equals
+$\phi(\size{G_{p,h,x}})=\phi(p^{h-x})=p^{h-x-1}(p-1)$. All elements
+in $G_{p,h,d+1}$ cannot generate $G_{p,h,d}$, since their order
+divides $p^{h-d-1}$. Therefore, by counting, all elements in
+$G_{p,h,d}\setminus G_{p,h,d+1}$ (there are $p^{h-d-1}(p-1)$ such
+elements) must be generators of $G_{p,h,d}$. These are precisely
+elements of the form $qp^d+1$, where $q$ is coprime to $p$. Note
+that $g_p$ is of this form. (Indeed, $g_p=(q\cdot p^d+1)\mod
+p^h=(q'\cdot p^d+1)\mod p^h$ for some $q'<p^{h-d}$ where $q'\equiv q
+\mod p$; hence if $q$ is coprime to $p$ then so is $q'$.) We
+conclude that $\order(g_p)=p^{h-d}$ as required.
+\end{proof}
+
+\begin{claim}[Order of $N+1$ in $\U{N^{e+1}}$]
+\label{clm-order-g} Let $N$ be an odd integer and $e$ a positive
+integer. Then \[ \order_{\U{N^{e+1}}}(N+1)=N^e. \]
+\end{claim}
+\begin{proof}
+Let $N=\prod^t_{i=1}{p_i}^{d_i}$ be the (unique) decomposition of $N$
+into powers of distinct primes, let $P_i=p^{d_i(e+1)}_i$,
+$G_i=\U{P_i}$, and $g_i=(N+1)\mod P_i$. It follows from
+Fact~\ref{fact-crt}~(2) that $\U{N^{e+1}}$ is isomorphic to
+$\opbrange[\times]{G_1}{G_t}$ via the isomorphism $\psi(x)=(x\mod
+P_1,\ldots,x\mod P_t)$, and thus
+$\order_{\U{N^{e+1}}}(N+1)=lcm(\opbrange{\order_{G_1}(g_1)}{\order_{G_t}(g_t)})$.
+Applying Lemma~\ref{lem-order-g-zp} for each $i$ with $p=p_i$,
+$d=d_i$ and $h=d_i(e+1)$, we conclude that
+$\order_{G_i}(g_i)=p^{d_i(e+1)-d_i}_i=p^{ed_i}_i$. Finally, since the
+$p_i$ are distinct primes, we have
+$lcm(\opbrange{p^{ed_1}_1}{p^{ed_t}_t})=\prod_{i=1}^tp_i^{ed_i}=N^e$
+as required.
+\end{proof}
+
+The characterization given in the following lemma is central in our
+analysis. It states that for odd $N$, the group $\U{N^{e+1}}$ is
+isomorphic to a direct product of the form $P\times C_0\times C_1$,
+where $P,C_0,C_1$ are Abelian groups with properties that will be
+specified in the lemma. In the following we will use additive
+notation for the groups $P,C_0,C_1$. For instance, for an integer $a$
+and a group $H$ we let $aH$ denote the group $\condset{ah}{h\in H}$,
+and denote by $h+H'$, a coset of $H'$ in $H$ (where $h\in H$ and $H'$
+is a subgroup of $H$). When considering elements of $\U{N^{e+1}}$
+directly, rather than as elements of $P\times C_0\times C_1$, we
+still use multiplicative notation, similarly to the notation used
+when defining the DJ cryptosystem.
+\begin{lemma}[Decomposition of $\U{N^{e+1}}$]
+\label{lem-g-structure} Let $N>1$ be an odd integer and $e$ be a
+positive integer.  Let $N=\prod_{i=1}^t{p_i}^{d_i}$ be the (unique)
+decomposition of $N$ into powers of distinct primes. Let
+$S\eqdef\prod^t_{i=1}p_i$ and let $P\eqdef\Z_{N^{e+1}/S}$. Then the
+group $\U{N^{e+1}}$ is isomorphic to a group $F= P\times C_0\times
+C_1$, where $C_0$ is of size coprime to $N$, $C_1$ is of size whose
+prime divisors all divide $N$, and $\size{C_0\times C_1}=\phi(S)$.
+Furthermore, there exists an isomorphism from $\U{N^{e+1}}$ to $F$
+which maps $g=N+1$ to $(\tilde{g},0,0)$ for some $\tilde{g}\in
+P\setminus\{0\}$.
+\end{lemma}
+
+%We note that when $e$ is sufficiently large relatively to $N$ ($e >
+%\lg_3(N)$), which will hold in our construction, every isomorphism
+%between $\U{N^{e+1}}$ and $P\times C_0\times C_1$ will have the
+%required properties. However, we stress that the existence of any
+%such isomorphism is sufficient for our purposes. We prove the above
+%lemma after proving a few auxiliary claims (some of them useful in
+%their own right).
+%
+%So far, we have shown that the map $\encdj$ has the `right structure'
+%(as discussed at the beginning of this section) for odd $N$. By
+%definition of $\encdj$, $\encdj(0)$ indeed uniformly samples a
+%subgroup $C_0\in\U{N^{e+1}}$, and defines a homomorphism between $\Z$
+%and $\U{N^{e+1}}/C_0$. Since $\order(g)=N^e$
+%(Claim~\ref{clm-order-g}), $\encdj$ indeed induces a well-defined
+%homomorphism from $\Z_{N,e}$ to $C_{N,e}/C_0$. We now prove our main
+%technical Lemma.
+
+\begin{proof}
+%[of Lemma~\ref{lem-g-structure}]
+We proceed by constructing an isomorphism between $\U{N^{e+1}}$ and
+$F$ as required. Let $P_i=p^{d_i(e+1)}_i$, $G_i=\U{P_i}$,
+$g_i=(N+1)\mod P_i$, and $F'=\opbrange[\times]{G_1}{G_t}$. It
+follows from Fact~\ref{fact-crt}~(2) that $\U{N^{e+1}}$ is
+isomorphic to $F'$. Using Fact~\ref{fact-zp-cyc}, $F'$ is
+isomorphic to $F''=\opbrange[\times]{\Z_{P_1/p_1}\times
+\Z_{p_1-1}}{\Z_{P_t/p_t}\times{\Z_{p_t-1}}}$. Consider an
+isomorphism $\psi''$ between $\U{N^{e+1}}$ and $F''$, obtained by
+composing the isomorphism $\eta$ from Fact~\ref{fact-crt} and any
+isomorphism between $F'$ and $F''$ as above (that is, one that maps
+$(\U{P_1},\opbrange{0}{0})$ onto
+$(\Z_{P_1/p_1},\Z_{p_1-1},\opbrange{0,0}{0,0})$, etc.). At this
+point, $g=N+1$ is mapped to an element in $(\opbrange{*,0}{*,0})$:
+otherwise, for some $i$, $\order_{\U{P_i}(g_i)}$ would have a
+nontrivial factor which is coprime to $p_i$, in contradiction to
+Lemma~\ref{lem-order-g-zp}. Finally, $F''$ is mapped onto $F$ via
+the following isomorphism.
+\begin{itemize}
+\item Rearrange the factors in $F''$ to obtain
+$(\opbrange[\times]{\Z_{P_1/p_1}}{\Z_{P_t/p_t}})
+\times\opbrange[\times]{\Z_{p_1-1}}{\Z_{p_t-1}}$, which using
+Fact~\ref{fact-crt}~(1) is isomorphic to
+$P\times\opbrange[\times]{\Z_{p_1-1}}{\Z_{p_t-1}}$.
+\item  For each $i$, let $p_i-1=\prod^{t_i}_{j=1}{p_{i,j}}^{d_{i,j}}$ be the
+(unique) decomposition of $p_i-1$ into powers of distinct primes.
+Repeatedly applying Fact~\ref{fact-crt}~(1), we get that
+$\Z_{p_i-1}$ is isomorphic to
+$H_i=\opbrange[\times]{\Z_{p^{d_{i,1}}_{i,1}}}{\Z_{p^{d_{i,t_i}}_{i,t_i}}}$.
+Replace $\Z_{p_i-1}$ with $H_i$. Note that the order of each factor
+of $H_i$ is a prime power.
+\item Regroup the factors of the groups $H_i$ to $C_0,C_1$
+as required in the lemma, by moving factors of size $p^d$ for some
+$p|N$ to the end (that is, every such factor appears after all
+factors whose size is coprime to $N$). We have obtained a group
+$P\times C_0\times C_1$ with properties as required.
+\end{itemize}
+Note that the above procedure can be formally described in terms of
+composing isomorphisms that follow the decompositions and
+regroupings. Finally, any isomorphism from $\U{N^{e+1}}$ to
+$P\times C_0\times C_1$ obtained in this manner maps $N+1$ to
+$(*,0,0)$ (since for any group homomorphism, the zero element is
+mapped to the zero element).
+\end{proof}
+
+In what follows we associate with any odd integer $N$ and positive
+integer $e$ an isomorphism $\psi:\U{N^{e+1}}\to F$, where $F$ and $\psi$ are as in Lemma~\ref{lem-g-structure}, and identify between
+elements of $\U{N^{e+1}}$ and triples from $F$ via this
+isomorphism. We illustrate the lemma by examining the structure of
+$\U{N^{e+1}}$ for some useful cases.
+\begin{example}
+\label{ex-valid} Consider a valid DJ key $N=p_1p_2$, where
+$p_1,p_2$ are $k$-bit primes (this implies in particular that
+$gcd(\phi(N),N)=1$), and let $e$ be a positive integer. Applying
+the decomposition procedure in the proof of
+Lemma~\ref{lem-g-structure}, $\U{N^{e+1}}$ is isomorphic to
+$F=\Z_{N^e}\times \underbrace{\Z_{p_1-1}\times\Z_{p_2-1}}_{C_0}$.
+(Unlike the proof of the lemma, here we do not fully decompose
+$C_0$.) Indeed, $S=p_1p_2=N$, implying that $P=\Z_{N^e}$, and
+$\size{C_0\times C_1}=\phi(S)=\phi(N)$. Also, since,
+$\phi(N)=(p_1-1)(p_2-1)$ is coprime to $N$, $\size{C_0}=\phi(N)$,
+and $C_1$ must be the trivial group $\set{0}$. This is in agreement
+with what we know about the structure of $\U{N^{e+1}}$ for well
+formed DJ keys $N$.
+\end{example}
+We next see that the group $C_1$ may be non-trivial when $N$ is not
+a valid DJ key.
+\begin{example}
+\label{ex-harmful} Let $p_1$ be an odd prime such that $p_2=2p_1+1$
+is prime, let $N=p_1p_2$, and let $e=1$. In this case,
+$\U{N^{e+1}}$ is isomorphic to
+$F=\Z_N\times\underbrace{\Z_2\times\Z_{p_1-1}}_{C_0}\times
+\underbrace{\Z_{p_1}}_{C_1}$. Indeed,
+$\phi(S)=(p_1-1)(p_2-1)=2p_1(p_1-1)$ and $gcd(p_1-1,N)=1$.
+\end{example}
+
+We will now see that $\encdj(\Z_{N,e})$ is distributed over a
+proper subgroup of $\U{N^{e+1}}$ whenever $C_1$ is non-trivial.
+More generally, we use Lemma~\ref{lem-g-structure} to analyze the
+distribution of $\encdj(m)$ for an arbitrary odd $N$ and
+$m\in\Z_{N^e}$. Recall that the DJ encryption function $\encdj(m)$
+samples a random element $r$ from ${\U{N^{e+1}}}$ and outputs
+$g^mr^{N^e}$ (where $g=N+1$ and all multiplications are in
+$\U{N^{e+1}}$).
+
+\begin{claim}
+\label{cl-djgeneral} Let $N>1$ be an odd integer and $e\ge 1$ be a
+positive integer. Then:
+\begin{enumerate}
+\item The triple representation of $\encdj(0)=r^{N^e}$ (where
+$r\in_R\U{N^{e+1}}$) is uniformly distributed over a
+set of the form $(P',*,C'_1)$, where $P'$ is a subgroup of $P$ and
+$C'_1$ is a subgroup of $C_1$. If $N$ is a valid DJ key, then we
+have $P'=\{0\}$ and $C'_1=C_1=\{0\}$, in which case $r^{N^e}$ is
+uniformly distributed over $(0,*,0)$. On the other hand, if $C_1$
+is nontrivial then $C'_1$ is strictly contained in $C_1$.
+\item For every $m\in\Z_{N^e}$
+the ciphertext $\encdj(m)$ is uniformly distributed over
+$(m\cdot\tilde{g}+P',*,C'_1)$, where $\tilde{g}\in P$ is as in
+Lemma~\ref{lem-g-structure} and $P',C'_1$ are as above.
+\end{enumerate}
+\end{claim}
+\begin{proof}
+To prove (1), note that $r^{N^e}$ can be written (in additive
+triple notation) as $N^e\cdot (p,c_0,c_1)$, where $p\in_R P,
+c_0\in_R C_0, c_1\in_R C_1$ and the latter three choices are
+independent. Noting that $\size{C_0}$ is coprime to $N$ (and
+therefore also to $N^e$), it follows that $N^ec_0$ is uniform over
+$C_0$. The characterization for a valid DJ key $N$ follows from
+Example~\ref{ex-valid} and Claim~\ref{clm-order-g}. When $C_1$ is
+nontrivial we have $gcd(|C_1|,N)>1$, in which case $C'_1$ a strict
+subset of $C_1$. Part (2) follows directly from (1), since
+$\encdj(m)= m\cdot (\tilde{g},0,0)+\encdj(0)$.
+\end{proof}
+
+%
+%\begin{claim}
+%\label{cl-rerand} Let $N>1$ be an odd integer and $e\ge 1$ a
+%positive integer. Then: (1) For $r\in_R(0,*,0)$ (in $\U{N^{e+1}}$),
+%$r^{N^e}\in_R(0,*,0)$. (2) For $r\in_R\U{N^{e+1}}$, $r^{N^e}$ is
+%uniformly distributed over a subgroup of the form $(F_1,*,F_2)$.
+%\end{claim}
+%\begin{proof}
+%(1) follows since $\size{C_0}$ is coprime to $N$ (and therefor to
+%$N^e$), and thus $\eta(x)=x^{N^e}$ is injective over $C_0$. As to
+%(2), a random $r$ in $\U{N^{e+1}}$, is distributed as
+%$(p,c_0,c_1)$, where $p\in_RP,c_0\in_RC_0,c_1\in_RC_1$. Then
+%$r^{N^e}$ is uniform over $(N^eP,N^eC_0,N^eC_1)$. As noted above,
+%this group equals $(N^eP,C_0,N^eC_1)$
+%\end{proof}
+
+We now show how to exploit an invalid key $N$ to mount an explicit
+attack against the CDS-based construction from
+Section~\ref{sec-trusted}.
+%More specifically, we show that for keys
+%$N$ such that $\gcd(N,\phi(N))>1$, it may be possible to send a
+%query $c$ for which the \ot leaks information, and the CDS also
+%fully reveals the secret.
+We consider a degenerate case of a branching program over a single
+input variable, which consists of two terminal nodes and one
+internal node. In this case, the client should send a single
+ciphertext from $\U{N^{e+1}}$. We show that a query
+$c\in\U{N^{e+1}}\setminus\support(\encdj(\Z_{N^e}))$ sent by a
+malicious client can be used to learn both output values.
+\begin{example}
+\label{ex-fullymal-attack} Let $N=p_1p_2$ and $e=1$ as in
+Example~\ref{ex-harmful} (for instance, one can use $p_1=5$ and
+$p_2=11$). Recall that in this case $\U{N^2}$ is isomorphic to
+$\Z_N\times (\Z_2\times\Z_{p_1-1})\times \Z_{p_1}$, and consider
+the (badly formed) query $c=(0,0,1)$ passed to the \otns. We first
+observe that the answer returned by $\ansot$ will reveal extra
+information. More concretely, the OT answer on a pair of bits
+$(s_1,s_2)$ is distributed according to
+$c^{s_1}\cdot(\encr{N,1}{1}\cdot c^{-1})^{s_2}\cdot \encr{N,1}{0}$.
+Since for this $N$ an encryption $\encr{N,1}{0}$ is uniformly
+distributed over $(0,*,0)$, the answer (in triple notation) is
+uniformly distributed over $(s_2\cdot \tilde{g},*,s_1-s_2)$, and
+thus allows to recover both $s_1$ and $s_2$. This alone would not be
+a problem if the CDS gadget described in Section~\ref{sec-trusted}
+would at least partially hide a secret $s\in_R\Z_N$ on input $c$. Unfortunately, using the
+construction from~\cite{AIR01} for well-formed DJ keys (Construction~\ref{con-air-cds-orig} below),
+would completely reveal the secret $s$, when applied under
+the condition that $c$ encrypts 0. Specifically, the ciphertext
+$\mu$ returned by the atomic CDS with randomizer $\rho$ will be
+uniform in $(s\cdot \tilde{g},*,\rho)$, where $s,\rho\in[N^e]$.
+Since $\order_P(\tilde{g})=N$,  the secret $s$ can be uniquely
+recovered from $\mu$. Intuitively, the information stored at the
+third component does not interfere with the information about $s$
+as long as we let the first component of $c$ be $0$ (as we do
+here). We note that this attack can be generalized to work for
+other $N$'s such that $gcd(N,\phi(N))>1$ and other values of $e$.
+\end{example}
+
+In order to protect the server against maliciously formed keys, we
+rely on the following observation: for any odd $N$, positive
+integer $e$ and $c\in \U{N^{e+1}}$, the ciphertext $c'=c^{N^T}$,
+where $T=\log N$, belongs to the ``harmless'' subgroup $(*,*,0)$. A
+similar observation was used (in a different way) by
+Kalai~\cite{T05} in the context of constructing one-round OT based
+on Paillier's cryptosystem.
+
+\begin{lemma}
+\label{lem-proj} Let $N>1$ be an odd integer and $e\ge 1$ be a
+positive integer. Let $T\eqdef\ceil{\lg_3(N)}$. Then
+\begin{enumerate}
+\item For every $x\in\U{N^{e+1}}$ we have $x^{N^T}\in(*,*,0)$.
+\item For $r\in_R\U{N^{e+1}}$ we have $r^{N^{e+T}}\in_R(0,*,0)$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+It follows from Lemma~\ref{lem-g-structure} that $\size{C_1}\leq
+\phi(S)<S\leq N$. We conclude that for any prime divisor $p_i$ of
+$\size{C_1}$, the highest power of $p_i$ dividing $N$ is no bigger
+than $T$. Recalling that all prime divisors of $\size{C_1}$ divide
+$N$ (by definition of $C_1$), we conclude that $\size{C_1}$ divides
+$N^T$ from which (1) follows. As to (2), since $\size{P}=N^{e+1}/S$
+and $\size{C_1}$ divides $N^T$ (by (1)), they both divide
+$N^{e+T}$, and so $P^{N^{e+T}}=C_1^{N^{e+T}}=\{0\}$. On the other
+hand, $\size{C_0}$ is coprime to $N$, and so $C_0^{N^{e+T}}=C_0$.
+\end{proof}
+
+In our final protocol, the server will convert every ciphertext $c$
+sent by the client to a corresponding ciphertext $c'=c^{N^T}$ which
+is guaranteed to be harmless. The OT and CDS implementations will
+be carefully adapted so that correctness is preserved, that is, the
+honest client will still be able to recover $P(x)$.
+
+%Corollary~\ref{cor-proj}(1) will play a crucial role in
+%constructing an augmented CDS, with certain hiding properties which
+%hold even for malformed keys. A similar observation was previously
+%made by Kalai in ~\cite{T05}, when constructing \ot with server
+%privacy against arbitrarily malicious clients in the context of
+%Paillier's cryptosystem. Corollary~\ref{cor-rerand}, characterizes
+%the distribution of $\encdj(0)$. The following lemma analyzes the
+%distribution of $\encdj$ over $\Z_{N^e}$.
+%\begin{lemma}
+%\label{lem-enc-distr} Given odd $N>1$, and $e>0$, $\encdj(m)$, for
+%$m\in{\Z_{N^e}}$, is distributed uniformly over $(mg~+F_1,*,F_2)$.
+%Furthermore, $\support(\encdj(\Z_{N^e}))$ equals $(<g~>,*,F_2)$
+%(where $F_1,F_2$ are as in Corollary~\ref{cor-rerand}). If $e>T$,
+%then $F_2=\set{0}$.
+%\end{lemma}
+%\begin{proof}
+%By definition of $\encdj$, $\encdj(0)$ is distributed as $r^{N^e}$,
+%where $r\in_R(*,*,*)$. By Corollary~\ref{cor-rerand}, it is
+%uniformly distributed over $(F_1,*,F_2)$. For $m\in\Z$,
+%$\encdj(m)=g^m\cdot\encdj(0)$, so it is uniform over
+%$(mg~+F_1,*,F_2)$. As noted before, $\encdj$ is well-defined over
+%$\Z_{N^e}$, since $\order(g)=N^e$ (by Claim~\ref{clm-order-g}). Now,
+%$F_1=N^eP$, so $\size{F_1}=N/S$. Since $\order(g)=N^e$,
+%$\size{F_1}|\size{<(g~,0,0)>}$. Since both $<(g~,0,0)>$, and
+%$(F_1,0,0)$ are subgroups of a cyclic group $(P,0,0)$, $F_1$ must be
+%a subgroup of $<(g~,0,0)>$.
+%\end{proof}
+%
+%In our construction, we will use $e>T$, so $F_2=\set{0}$, throughout our discussion.
+%We denote $\encdjnr(m)=g^m$, that is, the encryption of $m$ where $r$ is fixed to 1.
+%We note that the encryption is rerandomizable in the sence that $c_i\encdj(0)$ for $c_i\in\encdj(i)$
+%is a random encryption of $i$, we implicitly use this fact throughout the analysis.
+
+The following is an extension of Observation~\ref{obs-short} to
+general (possibly malformed) keys, which will be used to prove that
+the optimization of sending queries only for the highest level in
+the malicious setting does not compromise server privacy in the
+final protocol.
+\begin{lemma}
+\label{lem-short-mal} For every odd integer $N>1$, $e>e'\geq 1$,
+$i\in\Z$, and $c$ such that 
+$\psi(c)\in(i\tilde{g},*,0)$, it holds that $\psi'(c\mod
+N^{e'+1})\in(i\tilde{g}',*,0)$ 
+$\U{N^{e'+1}}$ ($\psi,\tilde{g}$ are as in Lemma~\ref{lem-g-structure} applied to $\U{N^{e+1}}$, and adding a tag signifies we consider the group $\U{N^{e'+1}}$).
+\end{lemma}
+\begin{proof}
+It is sufficient to prove the claim for $e'=e-1$, and the result
+follows for all $e'<e$ by induction. Let $c'=c\mod N^e\in \U{N^e}$
+($c'$ is indeed an element of $\U{N^e}$, since otherwise $c$
+would not be coprime to $N^{e+1}$). Given $c\in(i\tilde{g},*,0)$, we
+apply the inverse isomorphism $\psi^{-1}$, and learn that $c$ is of
+the form $g^ir \mod N^{e+1}$, where $\order_{\U{N^{e+1}}}(r)$ is
+coprime to $N$ (by properties of $\psi$, and structure of $F$). Clearly,
+$g^ir\mod N^e=(g^i\mod N^e)(r\mod
+N^e)=(i\tilde{g}',0,0)+\psi'(r\mod N^e)$. Applying
+Claim~\ref{clm-order-short} to $r,N,e$, $\order_{\U{N^e}}(r\mod
+N^e)$ must be coprime to $N$ (or else $ord_{\U{N^{e+1}}}(r)$ would not be as well). We conclude that $\psi(r\mod N^e)$ is in $(0,*,0)$, and the Observation follows.
+\end{proof}
+
+
+\paragraph{High level solution description.} Our high level solution
+relies on the fact that for any key (except for possibly an
+efficiently verifiable set), the group $(*,*,C'_1)$, where $C'_1$ is as in
+Claim~\ref{cl-djgeneral}, is a ``harmless'' subgroup, in the
+sense that if each query $c$ belongs to this subgroup, the protocol
+from the previous section (with insignificant modifications) reveals no extra information. By Claim~\ref{cl-djgeneral}, this group contains
+$\support(\encdj(\Z_{N,e}))=(<g>,*,C'_1)$ as a subgroup, so it poses a weaker
+restriction on the inputs then the construction in
+Section~\ref{sec-trusted}. In a nutshell, re-randomization by $r^{N^e}$ takes care of attacks
+as in Example~\ref{ex-fullymal-attack}, by ``erasing'' the third component, and the CDS takes care of
+information leaks from the first component. A solution under this assumption (and possibly malformed keys),
+is described in Section~\ref{subsec-mal-cond}.
+
+However, there is still a gap between
+$(*,*,C'_1)$, and $(*,*,*)$, as $C'_1$ is not necessarily $\set{0}$, and
+in particular, an attack similar to that in Example~\ref{ex-fullymal-attack} would still work.
+How do we ensure that the encryptions $c_i$ sent indeed belong to the harmless
+subgroup? %(Our final goal is to achieve an unconditional privacy
+%guarantee, as in Definition~\ref{def-fullymalicious}.) 
+It turns out that given $c\in \U{N,e}$, it's possible to efficiently compute a
+related $c'\in (*,*,0)\subseteq(*,*,C'_1)$, knowing only $N,e$. More
+specifically, given the query sequence $c=c_1,c_2,\ldots$, we will
+compute an augmented sequence $c'=c'_1,c'_2,\ldots$, where each
+$c'_i$ is simply $c^{N^T}_i$ (which is in $(*,*,0)$ by
+Lemma~\ref{lem-g-structure}), and feed $c'$, rather than $c$ to the \ot
+and CDS. The \ot and CDS implementations will be carefully adapted so
+that correctness is preserved, that is, the honest client will be
+able to recover $P(x)$. In particular, we will make sure that ${c'_i}^{N^T}$ contains information about the encrypted message $m$ by choosing $N^T<order(\tilde{g},0,0)=N^e$.
+%We can hope to preserve correctness since the $c'_i$'s will be `sufficiently related' to the $c_i$'s, so we %can carefully modify the CDS construction of ~\cite{AIR01}, and Construction~\ref{con-otimpl-smh} to operate %on the $c'$'s (rather than the original $c$'s), in a way that the honest client will be able to recover %$P(x)$.
+\subsubsection{An intermediate conditional privacy result}
+\label{subsec-mal-cond}
+As explained in the overview above, in this section we explain how to achieve server's privacy for arbitrarily malformed keys, while assuming
+the encryptions sent by the client fall in a certain subgroup of $\U{N,e+1}$. 
+More specifically, we describe the (slight) modification in the AIR atomic CDS construction, which allows the
+Construction from Section~\ref{sec-trusted} to remain server private conditioned on the fact that all $c_i$'s sent belong to the `harmless' subgroup $(*,*,C'_1)$.
+Although the result proven in this subsection holds for
+any $e>0$, we assume $e\geq T$ for simplicity, so $C'_1=\set{0}$. The analysis can be easily generalized
+to work for $e>0$. The restriction $e\geq T$ is required for the final construction providing unconditional server privacy described in Section~\ref{subsec-mal-uncond},
+so it is justified to make this simplification here, since it is only present for modular exposition on the full solution (with no assumptions), completed
+in the next section, where we show how to get rid of the assumption that $c_i\in (*,*,C'_1)$ (basically, by raising the $c_i$'s to the power of $N^T$).
+
+We start with extending the analysis of the \ot construction under the assumption (no changes are required in the implementation).
+\paragraph{Extending the analysis of Construction~\ref{con-otimpl-smh} to malformed keys}
+At this stage, we use Construction~\ref{con-otimpl-smh} as is. As we have seen already in the trusted setup model (see Example~\ref{ex-simpleattack}), the \ot is not server private even according to Definition~\ref{def-trustedsetup}.\footnote{That is, when considering an evaluation of a simple branching program, implementing an OT,
+even Definition~\ref{def-trustedsetup} of sender's privacy is not satisfied. This definition is potentially weaker than required from \strongot, as the simulator receives the query as well.} Instead, the following `conditional' notion of server privacy holds.
+\begin{claim}
+\label{clm-ot-priv-mal}
+Given an odd number $N>1$, $e>T$, $c\in\encdj(b)$ for some $b\in\bools$, and $s_0,s_1\in{\bools[\otl]}$, $\ansot((N,e),c,s_0,s_1)$ is distributed identically to $\encr{N,e}{s_{1-b}}$.
+\end{claim}
+\begin{proof}
+The output of $\ansot$ is distributed as $\encdj(0)c^{s_0}(\encdj(1)c^{-1})^{s_1}$. Since $c\in\encdj(b)$
+for some $b\in\bools$, it is uniformly distributed over $\encdj(b(s_0-s_1)+s_1)=\encdj(s_{1-b})$.
+\end{proof}
+
+This server privacy guarantee can be viewed as a strengthening of
+the server privacy of \strongot
+(Definition~\ref{def-ot-serv-priv}), since the output depends only
+on $s_{b^*}$, where $b^*$ is an `effective' selected index, even
+for $N$'s not generated by $\gen$, but the query must still be an
+`encryption' of some bit (under that malformed key). We will be
+able to modify the CDS implementation
+(Construction~\ref{con-air-cds-orig}) to allow asserting this type
+of `equality' conditions. Unlike the \ot implementation, the CDS
+implementation will satisfy hiding even for inputs $c$ outside of
+$\support(\encdj)$.
+\paragraph{CDS construction}
+For clarity, we include the original, and the augmented (AIR) atomic CDS constructions.
+\begin{construction}[AIR atomic CDS - original]
+\label{con-air-cds-orig}
+Given input $N,e,c,i$, where $N>1$ is odd,$e>0$, $c\in \U{N^{e+1}}$, $i\in [N^e]$.
+\begin{itemize}
+  \item $\usamp{\rho}{[N^e]};\usamp{s}{[N^e]}$, $\samp{h}{c^{-1}\cdot \encr{N,e}{i}}$.\footnote{Note that $N^e$
+    is the size of $\plaintext{N,e}$.}
+    \item Output $\mu=h^{\rho}\cdot\encr{N,e}{s}$.
+  \end{itemize}
+\end{construction}
+Recall that for well-formed DJ keys $N,e$, this construction satisfies (1) Correctness, in the sense that if $c$ is an encryption
+of $i$, then $\mu$ reveals $s$. (2) Privacy, in the sense that if $c$ is not an encryption of $i$, $H_\infty(s|\mu)>1$
+(that is, ``a lot'' of uncertainty about $s$ remains).
+\begin{construction}[AIR atomic CDS - augmented]
+  \label{con-air-cds-aug}
+  Given input $N,e,c,i$, where $N>1$ is odd,$e\geq T$, $c\in \U{N^{e+1}}$, $i\in [N^e]$,
+  operate as in Construction~\ref{con-air-cds-orig}, except for sampling $\rho$ from $[N^{e+1}]$,
+  rather than $[N^e]$.
+\end{construction}
+We needed to increase the domain of $\rho$ to handle inputs $c$ in
+$(*,*,0)$, rather than just in $\support(\encdj(\Z_{N^e}))$, the
+reason will be clarified shortly. Here we extend properties (1),(2) of the construction above so that
+$s$ is disclosed under the condition that $c$ is in $\encdj(i)$, that is,
+$c$ is an `encryption' of $i$ under the (possibly malformed) key
+pair $N,e$. More formally, the equivalents of properties (1),(2) of Construction~\ref{con-air-cds-orig} 
+for possibly malformed $N$, which are satisfied by the above
+construction are summarized by the following lemma.
+\begin{lemma}
+  \label{lem-air-cds-priv}
+  Let $N,e,c,i$ be as in Construction~\ref{con-air-cds-aug}. We
+  let $EQ(N,e,i,c)$ denote a predicate assuming 1 iff $c$ is in $\encdj(i)$.
+  (1) If $N,e$ is a valid DJ key pair, and $EQ(N,e,c,i)=1$, then $s$ can be efficiently recovered from $\mu$.
+  (2) Consider the joint distribution $(s,\mu)$. Assume $c\in (*,*,0)$ such that $EQ(N,e,i,c)=0$,
+  then $H_{\infty}(s|\mu=\mu_0)\geq 1$ for any possible (for that input) output $\mu_0$.
+\end{lemma}
+\begin{proof}
+  Property (1) holds since if the client is honest, $\mu$ is precisely
+  an encryption of some $s\in\plaintext{N,e}$, and $s$ can be uniquely
+  recovered by decrypting, as before. This is not changed by increasing the domain of $\rho$ $N$-fold, as follows directly from Claim~\ref{cl-djgeneral}.
+  We turn to proving property (2).
+  Let $c\in (*,*,0)$, such that $EQ(N,e,c,i)=0$. We note that for any
+  fixed $s,\rho$ $\mu$ is uniform over $(s\tilde{g}+\rho \tilde{h} +
+  P',*,0)$, where $(\tilde{h},r',0)$ for some $r'$ represents
+  $\psi(\encdjnr(s)c^{-1})$, and $P'$ is as in Claim~\ref{cl-djgeneral}. This follows by combining Claim~\ref{cl-djgeneral}.1, with the
+  assumption that $c\in(*,*,0)$. Denote $\mu=(\tilde{\mu},r'',0)$.
+  Note that due to rerandomization, only the identity of the coset of $(P',*,0)$ that
+  $\mu$ belongs to carries information about $s$. Wlog, we assume
+  $P'=0$ (since the additive factor of $P'$ is
+  independent of everything else, it can only hide information about
+  $s$). By definition, $(\tilde{g},0,0),(\tilde{h},0,0)\in(P,0,0)$, which is cyclic (isomorphic
+  to $\Z_{N^{e+1}/S}$).
+  By the assumption $EQ(N,e,c,i)=0$, that is, $c\notin\encdj(i)$, we
+  obtain $h\notin\encdj(0)$, and thus $\tilde{h}\neq 0$. Now, recall
+  $\order(g)=\order((\tilde{g},0,0))=N^e$. Since $\tilde{h}\neq 0$,
+  $\order(\tilde{h},0,0)$ is a non-trivial divisor of $\size{P}$
+  (which equals $N^{e+1}/S$). We conclude that
+  $p=gcd(\order((\tilde{g},0,0)),\order((\tilde{h},0,0)))>1$. For any
+  given output $\mu$, applying Claim~\ref{clm-cnt-sol}, to the group
+  $(P,0,0)$, and $(\tilde{g},0,0),(\tilde{h},0,0),(\tilde{\mu},0,0)$,
+  we conclude that there are $p$ distinct pairs
+  $(s,\rho)\in[N^e]\times[\order(\tilde{h})]$ for which this
+  $\tilde{\mu}$ is obtained, in which each value of $s$ appears in exactly one
+  pair, and where $p$ is the smallest prime divisor of $N$. Since the
+  algorithm samples $s$ uniformly from $[N^e]$, and $\rho$ uniformly
+  from $[N^{e+1}]$, which is divisible by $\order((\tilde{h},0,0))$,
+  each solution pair is sampled the same (non-zero) number of times,
+  so we obtain that for all possible $\mu_0$, $H_{\infty}(s|\mu=\mu_0)= \log(p)\geq\log{3}>1$, and the result follows.
+\end{proof}
+
+CDS under monotone formulas over the atomic predicates $EQ(\cdot)$, which `inherits' the same (limited) form of condition (2), can be implemented based on Construction~\ref{con-air-cds-aug} using the techniques from~\cite{AIR01,GIKM} (we extend the construction of CDS for monotone formulas of ``atomic'' 
+conditions as in Section~\ref{sec-trusted}).
+More formally, given $k$, multiple values $\opbrange{c_1}{c_n}\in\U{N^{e+1}}$, and a monotone formula $C$ over predicates $y_{i,v}$, for some $v\in[N^e]$, which assume $1$ iff. $EQ(N,e,c_i,v)=1$, condition (1) states that if $N,e$ is a valid key pair, and $\opbrange{c_1}{c_n}$ satisfies a set of $y_{i,v}$'s, so that $C$ evaluates to 1, then $s$ can be efficiently recovered from $\mu$. Condition (2), states that if $\opbrange{c_1}{c_n}$ does not satisfy a set of $y_{i,v}$'s, such that $C$ evaluates to 1, then $\mu$ can be simulated from $N,e,c,\size{s}$ alone, with distance $\eps(k)$, where $\eps(k)$ is a negligible function (to facilitate the use of this CDS
+for our application, and obtain statistical server privacy, we also ``enhance'' the privacy requirement so that only negligible information about $s$ is revealed).
+\paragraph{}Revising the question of increasing the domain of $\rho$, we see that had we sampled $\rho$ from $\Z_{N^e}$, some of the solutions $(s,\tilde{\rho})$ could not be sampled (since $\order(h')$ may be upto $N^{e+1}/S$, which is possibly larger than $N^e$), and we could theoretically get a single reachable pair of solutions $(s,\tilde{\rho})$ while there is more than one solution (over $[N^e]\times[\order(h')]$), and uniquely recover $s$.
+\begin{remark}%[On extending the CDS construction beyond DJ]
+  %Can we adjust the the domains for $s,\rho$, to make it work for other homomorphic cryptosystems?
+  We rely on the fact that a multiple ($N^{e+1}$) of $\size{P}$ can be efficiently
+  computed from $N,e$ alone (even for malformed $N$), in order to be able to uniformly sample the set
+  of solutions. However, we could manage even if such a multiple was not known, but rather some upper bound
+  $B$ on it. Then, taking $[B]$ as the domain for $\rho$, each solution would be sampled at least once,
+  and any solution would be sampled either $t$ or $t+1$ times for some $t$ (for $B>>\size{P}$, $H_{\infty}(s|\mu=\mu_0)$ will approach the bound on the entropy obtained by our construction).
+  %On the other hand, it is crucial that $\order(g)$
+  %is never larger than $N^e$ (which is $\order(g)$ in $\ciphtext{N,e}$ for valid pairs $N,e$), otherwise there would be no
+  %proper choice of the domain for $s$, that correctly discriminates between honest and dishonest clients.
+  %Another DJ-specific feature we strongly rely on, is the fact that $gcd(\order(g))$ is divisible by any prime divisor of
+  %$\size{(*,0,0)}$ (otherwise, we couldn't apply Claim~\ref{clm-cnt-sol}).
+\end{remark}
+\paragraph{Putting things together.}
+The main protocol here is as outlined in Section~\ref{sec-trusted}, but using an augmented version of CDS for equality conditions
+(using Construction~\ref{con-air-cds-aug} instead of Construction~\ref{con-air-cds-orig}), as explained above. The OT implementation remains unchanged.
+We do not formally prove the server privacy of this version of the main protocol, but we could readily fill in the details, and obtain a protocol
+for evaluating branching programs on encrypted data, whose communication complexity is comparable
+to that obtained for the trusted setup model, which satisfies a weaker notion of Definition~\ref{def-fullymalicious}, quantifying over `harmless' pairs $(N,c)$ rather than arbitrary $N,c$ (in particular, the restriction is only on $c$). At large, the CDS ensures (almost) nothing is learned in cases when the \ot may leak information.
+That is, if the conditions for hiding of the CDS do not hold,
+%(when conditioning on $C=\bigwedge^n_{i=1}(y_{i,0}\vee y_{i,1})$)
+then there exists $x^*\in\bools[n]$, such that each $c_i$ is in $\encdj(x^*_i)$, and we can simulate
+the output of $\eval$ from $k,N,c,P(x^*)$ similarly to the way it's done in the proof of server privacy of
+the (generic) protocol in Figure~\ref{fig-main} in the semi-honest model
+(relying on Claim~\ref{clm-ot-priv-mal}). Otherwise (then the \ot may reveal extra information), the CDS insures that (almost) all information about the original output is lost.
+Note that all our lemmas have a precondition that $N$ is odd, which can be efficiently verified.
+Also note that in order to make the optimization of sending only queries for the highest level, and computing the rest by modular reduction without compromising server privacy, we need to further restrict the domain of the $c_i$'s to be in $(*,*,0)$, so we can apply Lemma~\ref{lem-short-mal}.
+\subsubsection{The final construction}
+\label{subsec-mal-uncond}
+By this point, we have achieved a `conditional' form of server privacy, and it is still possible
+to cheat by sending $c$ outside of $(*,*,C'_1)$ (see Example~\ref{ex-fullymal-attack}).
+To overcome this problem, we do not let the client
+generate the queries used as input to the \ot and CDS single-handedly (since he may cheat), but rather
+jointly with the server. In other words, given the query $c=(c_1,\ldots,c_n)$, the server applies a certain transformation to $c$, obtaining $c'=(c'_1,\ldots,c'_n)$, where all $c'_i$'s are in $(*,*,0)\subseteq{(*,*,C'_1)}$, and feeds them to the CDS and \ot during the main protocol's execution (the high-level structure of which remains mostly unchanged). We also modify the \ot and the CDS constructions accordingly, in a way that the protocol remains correct.
+The transformation applied is simply $\eta(x)=x^{N^T}$. The transformation will be incorporated into the implementation of the \ot and the CDS, that is, the high-level construction remains as before, while the CDS and \ot constructions first raise the input ciphertexts to the $N^T$'th power, and operate on the modified ciphertexts. We first define the augmented \ot procedure.
+\begin{construction}[\strongot (malicious setting)]
+  \label{con-otimpl-mal}
+  Modify Construction~\ref{con-otimpl-smh} as follows.
+  \begin{enumerate}
+    \item $\ansot'(N,q,s_0,s_1)$:
+    \begin{itemize}
+      \item Infer $e$ from $q$.
+      \item Compute an output $a$ as in the original construction.
+      \item Output $a'=a^{N^T}$.
+    \end{itemize}
+    %Equivalently, this can be viewed as operating as before, while all the
+    %values on the input wires ($q_0$, and the constant 1) are replaced with their $N^T$'th power.
+    \item $\queot'(N,1^k,1^t,1^{\otl},i)$:
+    Once $e$ is fixed, operate as before.
+    The output of $\ansot'$ is then an encryption of $N^T\cdot s_i$.
+    This reduces the effective domain of the values $s_i$ that can be uniquely decrypted from $\Z_{N^e}$
+    to $\Z_{N^{e-T}}$. Therefore, to allow unique decryption, we choose $e$ as the minimal integer,
+    such that $N^{e-T}>2^{\otl}$ (rather than $N^e>2^{\otl}$). This implies a mild increase in the expansion
+    parameters $\alpha,\beta$ (relatively to the original construction). Namely, $\beta(k,t,\otl)=\otl+O(k\cdot T)=\otl+O(k^2)$, and $\alpha(k,t,\otl)=t(\otl+O(k^2))$ (compared to $\beta(k,t,\otl)=\otl+O(k),\alpha(k,t,\otl)=t(\otl+O(k))$ in the semi-honest
+    and honest-setup settings).
+    \item $\decot'((p_1,p_2),a)$: Infers $e$ from $a$, and outputs $\decdj(a)/N^T$, where the division is done over
+    $\Z$.
+  \end{enumerate}
+\end{construction}
+It's easy to see that the \ot remains correct (since we select $e$ to be sufficiently large,
+the honest client uniquely recovers $s_i$). As to server privacy, the following holds.
+\begin{claim}
+  \label{clm-ot-priv-mal-uncond}
+  Given an odd number $N>1$, $e>0$, $c\in{\U{N^{e+1}}}$ such that $c^{N^T}\in\encdj(b)^{N^T}$ for some $b\in\bools$, and $s_0,s_1\in{\bools[\otl]}$, $\ansot'((N,e),c,s_0,s_1)$ is distributed identically to $(N^Ts_{1-b}\tilde{g},*,0)$.
+\end{claim}
+\begin{proof}
+  $\ansot'((N,e),c,s_0,s_1)=\ansot((N,e),c,s_0,s_1)^{N^T}=(c^{s_0}(\encdj(1)\cdot
+  c^{-1})^{s_1}\cdot\encdj(0))^{N^T}=(c^{s_0-s_1})^{N^T}\cdot\encdj(s_1)^{N^T}$.
+  Since $c^{N^T}\in\encdj(b)^{N^T}$, $\ansot'((N,e),c,s_0,s_1)$ is
+  uniform over
+  $\encdjnr(N^T(s_1+b(s_0-s_1)))\encdj(0)^{N^T}\in_R(N^T(s_{1-b})\tilde{g},*,0)$,
+  where the last transition follows by Lemma~\ref{lem-proj}.2.
+\end{proof}
+\paragraph{} It remains to show how to modify Construction~\ref{con-air-cds-aug}.
+\begin{construction}
+  \label{con-air-cds-aug2}
+  For odd $N>1,e>T,c\in\U{N^{e+1}},i\in[N^{e-T}]$, we operate as in Construction~\ref{con-air-cds-aug},
+  with the following modifications.
+  \begin{itemize}
+    \item Run Construction~\ref{con-air-cds-aug}, with the difference that $s$ is sampled from $[N^{e-T}]$
+    (rather than $[N^e]$), to obtain $\mu$. The reason is that
+    $\mu^{N^T}$ only contains information about $s\mod N^{e-T}$, even
+    if $N$ is well-formed, and $EQ(N,e,c,i)=1$, so this is required to
+    maintain correctness. The domain of $i$ is restricted for the same
+    reason.
+    \item Output $\mu^{N^T}$ instead of $\mu$ ($\mu$ is computed as before).
+  \end{itemize}
+\end{construction}
+The construction satisfies the following equivalent of Lemma~\ref{lem-air-cds-priv}.
+\begin{lemma}
+  \label{lem-aug-air-cds-priv}
+  Let $N,e,c,i$ be as in Construction~\ref{con-air-cds-aug2}.
+  Let $EQ'(N,e,c,i)$ denote a predicate assuming 1 iff $c^{N^T}\in(iN^T\tilde{g},*,0)$.
+  (1) If $N,e$ is a valid DJ key pair, then $s$ can be efficiently recovered from $\mu$.
+  (2) If $N>1$ is odd, and $c^{N^T}$ is not in $(iN^T\tilde{g},*,0)$, then the joint distribution
+  $(s,\mu)$, satisfies that for any possible $\mu_0$, $H_{\infty}(s|\mu=\mu_0)\geq 1$.
+\end{lemma}
+\begin{proof}
+  Property (1) is obvious from the construction, and the fact that
+  $\order(g)=N^e$ for valid $N$, (by the correctness of DJ). As to property (2), let $c\in
+  (*,*,0)$, such that $EQ'(N,e,c,i)=0$. We note that for any fixed
+  $s,\rho$,$\mu$ is uniform over $(N^T(s\tilde{g}+\rho
+  \tilde{h}),*,0)$, where $(\tilde{h},r',f')$ for some $r',f'$
+  represents $\psi(\encdjnr(s)c^{-1})$. This follows directly from Lemma~\ref{lem-proj}.
+  Denote $\mu$ by $(\tilde{\mu},r'',0)$. Since $\order(g)=N^e$,
+  $\order(N^T\tilde{g},0,0)=N^{e-T}$, which is divisible by $N$ since
+  $e>T$. Since $c^{N^T}\notin(iN^T\tilde{g},*,0)$, $h^{N^T}$ must be
+  in $(N^Tj,*,0)$, where $j\neq i\tilde{g}$ (again, by
+  Lemma~\ref{lem-proj}), so $\tilde{h}\neq 0$. As in the proof of Lemma~\ref{lem-air-cds-priv}, its order $p>1$ is
+  a proper divisor of $N$. Thus, $(N^T\tilde{g},0,0)$, and
+  $(N^T\tilde{h},0,0)$ belong to the cyclic group $(N^TP,0,0)$, by
+  Claim~\ref{clm-cnt-sol}, there are $p$ distinct pairs
+  $(s,\rho)$ in $[N^{e-T}]\times[\order(h')]$, where each value of $s$
+  appears in exactly one pair. Since the algorithm samples $s,\rho$
+  from $[N^{e-T}]\times[N^{e+1}]$, and $\order((N^T\tilde{h},0,0))$
+  divides $N^{e+1}$, for all $\mu_0$, every possible value of $s$ is sampled
+  the same, non-zero, number of times. We conclude that $H_{\infty}(s|\mu=\mu_0)=\log(p)>1$.
+\end{proof}
+
+CDS over formulas of such equality conditions is constructed as described in Section~\ref{subsec-mal-cond},
+where $EQ(\cdot)$ is replaced by $EQ'(\cdot)$.
+\paragraph{}We are now ready to formally state the modified protocol, and prove its privacy and correctness.
+\begin{construction}[Main protocol - arbitrary malicious setting]
+  \label{con-main-fullymal}
+  We modify the construction described for the trusted setup setting as follows.
+  Use Construction~\ref{con-otimpl-mal} as the \ot implementation,
+  and use a CDS based on Construction~\ref{con-air-cds-aug2}, to disclose the output $a$ under the condition $C=\bigwedge^n_{i=1}(y_{i,0}\vee y_{i,1})$.
+  Additionally, $\eval$ checks that $N$ is an odd $2k$-bit number $>1$. If the check does not pass, output 0. Otherwise run the high level protocol as before, in particular, we make the optimization of computing the queries for lower levels by modular reduction. The $c_i$'s are interpreted as elements of $\U{N^{e_{\ell}+1}}$, where the $e_j$'s corresponding to each level are as determined by Construction~\ref{con-otimpl-mal} on $\beta'^{(j)}(k,2,1)$.
+\end{construction}
+We prove the following theorem.
+\begin{theorem}
+  Assuming DCRA~\cite{DJ01}, Construction~\ref{con-main-fullymal} is a protocol for evaluating a
+  binary branching program of length $\ell$ and of arbitrary size on
+  an encrypted input of length $n$, with a total communication of
+  $O(poly(k)n\ell^2)$ bits (where $k$ is a security parameter). The protocol
+  provides client privacy as well as statistical size hiding server privacy
+  according to Definition~\ref{def-fullymalicious} (as noted for the construction in the trusted setup model, we can obtain $O(poly(k)n\ell)$ communication complexity if we settle for computational server privacy).
+\end{theorem}
+\begin{proof}
+  As before, client privacy follows from the semantic security of DJ.
+  Correctness follows by correctness of the OT, and condition (1) satisfied by Construction~\ref{con-air-cds-aug2}
+  (Lemma~\ref{lem-aug-air-cds-priv}). 
+  we show a simulator $\sim$ as in Definition~\ref{def-fullymalicious}, that proceeds as follows.
+  \begin{itemize}
+    \item On input $(1^k,\ell,n,N,c)$, run the validity checks as in $\eval$.  
+    \item If the checks do not pass, output $0$, and set $x^*$ can be set to $\overline{0}$, to receive $v=U(P,x^*)$.
+    (In this case, $x^*$ can be set to and arbitrary fixed value, as $U(P,x^*)$ is not actually used to produce the simulator's output).
+    \item If the checks pass, consider the sequence $\opbrange{e_1}{e_{\ell}}$ specifying the groups in which to operate on each level (as computed in $\eval$).
+    Check whether the $c_i$'s satisfy the CDS condition. 
+    \begin{itemize}
+      \item If they do, for each $i\in [n]$, let $x^*_i=i$ if $c^{N^T}_i\in (iN^T\tilde{g},*,0)$ ($i\in\set{0,1}$).
+      Let $v=U(P,x^*)$. Compute an iterative encryption of $v$. Namely, let $\lambda_0=v$, and for $0<j\leq \ell$, let $\samp{\lambda_j}{\encr{N,e_j}{\lambda_{j-1}}^{N^T}}$.
+      \item Otherwise (CDS condition is not satisfied by $c$), fix $\lambda_\ell=\overline{0}$ (or the proper size). Fix $x^*=\overline{0}$ (again, $x^*$ can be arbitrary here).
+    \end{itemize}
+    \item Finally, output $\lambda_{\ell}\oplus s,\mu$, where $s$ is the secret disclosed via the CDS derived from Construction~\ref{con-air-cds-aug2} under $C=\bigwedge^n_{i=1}(y_{i,0}\vee y_{i,1})$, and $\mu$ is the CDS output. 
+  \end{itemize}
+  When comparing the output of $\eval$ on input, $(1^k,\ell(n),n,N,c,P)$, and a corresponding output of the simulator on $(1^k,\ell(n),n,N,c,v=U(P,x^*))$, there are 
+  three possible cases.
+  \begin{enumerate}
+    \item If the validity checks on $N,c$ (in $\eval$) do not pass, then both the simulator and
+    $\eval$ in the real interaction output 0, and the simulation is perfect (for any $v$, e.g, for $v=0$).
+    \item If the validity checks pass, and the conditions for (2) in the CDS do not
+    hold for the formula $C=\bigwedge^n_{i=1}(y_{i,0}\vee y_{i,1})$
+    (that is, $N$ is odd, and each ${c_i}^{N^T}$ is either in $(0,*,0)$, or $(N^T\cdot \tilde{g},*,0)$), then the `effective' input $x^*$ extracted from $c$ by $\sim$ is such that the output $a$ of $\eval(1^k,N,c,P)$ before applying the CDS, is distributed identically to $\lambda_{\ell}$ in $\sim(1^k,N,c,P(x^*))$, as we prove in the following. Finally, applying the CDS on identical distributions, will result in identical distributions, and the result follows. Similarly to the proof of server privacy in the semi-honest setting, consider the path $v_0,v_1,\ldots,v_\ell$ (starting from the root) induced in $P$ by the assignment $x^*$. It holds that $\lambda_0=P(x^*)=\lab(v_\ell)$.
+    Note that each $c_{i,j}$ computed by modular reduction satisfies $c^{N^T}_{i,j}\in(x^*_iN^T\cdot \tilde{g},*,0)$
+    for all levels $j$ (due to Lemma~\ref{lem-short-mal}). Intuitively, for each $i$, the $c_{i,j}$'s are `consistent' over the levels. Back to our inductive argument, traversing the path from the leafs up,
+    $\lab(v_{j-1})$ is obtained from $\lab(v_j)$ as described in Construction~\ref{con-otimpl-smh},
+    where the \ot input $c_{i,j}$ is according to the label $x_i$ of that node.
+    By Claim~\ref{clm-ot-priv-mal-uncond}, $\ansot'(N,e_{\ell-j},c,\lab(v_j),\lab(v_o))$ (here $v_o$ denotes
+    the other child of $v_{\ell}$, and $\lab(v_j)$ is at position $x^*_i$) is distributed identically
+    to $\encr{N,e_{\ell-j}}{\lab(v_j)}^{N^T}$, which is in turn distributed identically to
+    $\lambda_{\ell-j+1}$.
+    This follows by the inductive hypothesis, and the fact that the $e_j$'s are calculated by the simulator and the real execution in the same manner.
+    \item Assume the validity checks pass, but the conditions for (2) do hold (that is, there exists some $i\in[n]$, such that ${c_i}^{N^T}$ is not in $(bN^T\tilde{g},*,0)$ for some $b\in\bools$). Then, by Lemma~\ref{lem-aug-air-cds-priv}, $(s,\mu)$, where $\mu$ is the CDS
+    output, and thus also $(\lambda\oplus s,\mu)$, in the real execution and the simulation is at distance at most $\eps(k)$ from the simulated distribution
+    $S(1^k,N,c,e,\size{a})$, for $a=\lambda_\ell,\lab(v_0)$ respectively, which are of the same length, and $S$ is the simulator guaranteed for the CDS.\footnote{Although we do not state condition (2) in terms of simulation, it can easily be restated, and proved in this form.} We conclude that the distance between the output of the real and simulated execution is at most $2\eps(k)$, which is negligible as required. 
+  \end{enumerate}
+\end{proof}
+
+Here we consider statistical server privacy, and the communication complexity
+is $O(n\ell^2poly(k))$ in this case. As mentioned in the previous section, if we settle for computational server privacy, the communication complexity may be reduced to $O(n\ell poly(k))$.
+
+\paragraph{} It is interesting to note that the \ot construction of Kalai in ~\cite{T05} in the context
+of Paillier also implicitly relies on a variant of CDS under the condition `$c$ is in $Enc_N(0)$', where $N$ is possibly malformed.
+Her CDS variant extends techniques of smooth projective hashing by Cramer and Shoup,
+for sets specified by malformed keys $N$, and has a different structure.
+It allows to disclose secrets over conditions of the form $c\in(0,*,0)$, for arbitrary $N$, and $e=1$
+(any such CDS can be used to disclose secrets under conditioned as $c\in(i\cdot \tilde{g},*,0)$ for any $i$), for a variant of the Paillier cryptosystem. As mentioned before, this construction can be
+readily extended to work over (a variant of) the DJ cryptosystem. Unlike our implementation, it can work
+for $e<T$ (in particular, it is described for $e=1$), and allows to disclose secrets from $\Z_{N^e}$,
+rather than $\Z_{N^{e-T}}$. Interestingly, it uses the idea of raising to to $N^T$'th power in a different manner. On the other hand, client privacy of protocols based on that variant of Paillier/DJ encryption
+rely on the GRS assumption (additionally to the DCRA assumption).
+  
+\begin{footnotesize}
+	\begin{thebibliography}{10}
+		
+		\bibitem{AIR01}
+		W.~Aiello, Y.~Ishai and O.~Reingold.
+		\newblock Priced oblivious transfer: How to sell digital goods.
+		\newblock In {\em Proc.\ EUROCRYPT 2001}, pages 119-135.
+		
+		\bibitem{BG}
+		B.~Barak and O.~Goldreich.
+		\newblock  Universal Arguments and their
+		Applications.
+		\newblock In {\em Proc.\ CCC 2002}, pages 194-203.
+		
+		\bibitem{beaver00}
+		D.~Beaver.
+		\newblock {Minimal-Latency Secure Function Evaluation}.
+		\newblock In {\em Eurocrypt '00}, pages 335--350, 2000.
+		\newblock LNCS No. 1807.
+		
+		\bibitem{BBCM} C.~H. Bennett, G.~Brassard, C.~Cr{\'e}peau, and U.M.
+		Maurer.
+		\newblock Generalized privacy amplification. {\em IEEE Transactions on
+			Information Theory,} 41(6):1915-1923, 1995.
+		
+		\bibitem{BBR} C.~H.~Bennett, G.~Brassard, J.M.~Robert.
+		\newblock Privacy Amplification by Public Discussion.
+		\newblock {\em SIAM J. Comput.} 17(2): 210-229, 1988.
+		
+		\bibitem{BGN}
+		D.~Boneh, E.J. Goh, and K.~Nissim.
+		\newblock Evaluating $2$-{DNF} formulas on ciphertexts.
+		\newblock In {\em Proc. 2nd TCC}, pages 325--341, 2005.
+		
+		\bibitem{cckm00} C.~Cachin, J.~Camenisch, J.~Kilian, and J.~Muller.
+		\newblock One-round secure computation and secure autonomous mobile
+		agents.  
+		\newblock In {\em Proceedings of ICALP'00}, 2000.
+		
+		\bibitem{cms99}
+		C.~Cachin, S.~Micali, and M.~Stadler.
+		\newblock Computationally private information retrieval with polylogarithmic
+		communication.
+		\newblock {\em Proc. of EUROCRYPT '99}, pages 402--414.
+		
+		\bibitem{canetti01} R. Canetti.  \newblock Universally composable
+		security: A new paradigm for cryptographic
+		protocols. \newblock In {\em FOCS}, pp. 136--145, 2001.
+		
+		
+		\bibitem{CGN}
+		B.~Chor, N.~Gilboa, and M.~Naor.
+		\newblock Private information retrieval by keywords.
+		\newblock Technical Report TR-CS0917, Department of Computer Science, Technion,
+		1997.
+		
+		\bibitem{CGKS95}
+		B.~Chor, O.~Goldreich, E.~Kushilevitz, and M.~Sudan.
+		\newblock Private information retrieval.
+		\newblock {\em J. of the ACM}, 45:965--981, 1998.
+		\newblock Earlier version in FOCS '95.
+		
+		\bibitem{DJ01}
+		I.~Damg{\aa}rd and M.~Jurik.
+		\newblock A Generalisation, a Simplification and some Applications of Paillier's Probabilistic Public-Key System
+		\newblock In {\em Proc.\ of CT-RSA '02}, pages 79-95.
+		
+		\bibitem{EGL}
+		S.~Even, O.~Goldreich and A.~Lempel.
+		\newblock A Randomized Protocol for Signing Contracts.
+		\newblock In {\em Communications of the ACM,} 28(6):637--647, 1985.
+		
+		\bibitem{FKN94}
+		U.~Feige, J.~Kilian, and M.~Naor.
+		\newblock A minimal model for secure computation.
+		\newblock In {\em Proc.\ $26$th STOC}, pages 554--563. ACM, 1994.
+		
+		\bibitem{FIPR05}
+		M.J.~Freedman, Y.~Ishai, B.~Pinkas and O.~Reingold.
+		\newblock Keyword search and oblivious pseudorandom fuctions.
+		\newblock In {\em Proc.\ of TCC 2005} vol. 3378, pages 303-324.
+		
+		\bibitem{GIKM}
+		Y.~Gertner, Y.~Ishai, E.~Kushilevitz, and T.~Malkin.
+		\newblock Protecting Data Privacy in Private Information Retrieval Schemes.
+		\newblock In {\em Proc.\ 30th STOC}, pages 151-160, 1998.
+		
+		
+		\bibitem{Goldbook} O. Goldreich.  \newblock {\em Foundations of
+			Cryptography: Basic Applications}.  \newblock Cambridge University
+		Press, 2004.
+		
+		\bibitem{GM}
+		S.~Goldwasser and S.~Micali.
+		\newblock Probabilistic encryption.
+		\newblock {\em JCSS}, 28(2):270--299, 1984.
+		\newblock Preliminary version in Proc. STOC '82.
+		
+		\bibitem{ILL}
+		R. Impagliazzo, L. A. Levin, and M. Luby.
+		\newblock Pseudo-random generation from one-way functions.
+		\newblock In {\em Proc.\ 21st STOC}, pages 12-24, 1989.
+		
+		\bibitem{ik00}
+		Y.~Ishai and E.~Kushilevitz.
+		\newblock Randomizing polynomials: A new representation with applications to round-efficient secure computation.
+		\newblock In {\em Proc.\ $41$st FOCS}, 2000.
+		
+		\bibitem{T05}
+		Y.~T.~Kalai.
+		\newblock Smooth Projective Hashing, and two message Oblivious Transfer.
+		\newblock In {\em Proc.\ of EUROCRYPT 2005}, pages 78-95.
+		
+		\bibitem{MRK}
+		S.~Micali, M.~Rabin and J.~Kilian.
+		\newblock Zero knowledge sets.
+		\newblock In {\em Proc.\ 44th FOCS}, pages 80-91, 2003.
+		
+		\bibitem{K}
+		J.~Killian
+		\newblock Founding cryptography on oblivoius transfer.
+		\newblock In {\em Proc.\ STOC '89}, pages 20-31.
+		
+		\bibitem{Kol}
+		V.~Kolesnikov.
+		\newblock  Gate Evaluation Secret Sharing and Secure
+		One-Round Two-Party Computation.
+		\newblock In {\em Proc.\ of ASIACRYPT 2005}, pages 136-155.
+		
+		\bibitem{KO97}
+		E.~Kushilevitz and R.~Ostrovsky.
+		\newblock Replication is not needed: single database, computationally-private
+		information retrieval
+		\newblock In {\em Proc.\ 38th FOCS}, pages 364-273, 1997.
+		
+		\bibitem{L05}
+		S.~Laur and H.~Lipmaa.
+		\newblock Additively homomorphic Conditional Disclosure of Secrets and applications.
+		\newblock Eprint report 2005/378.
+		
+		\bibitem{LP04}
+		Y.~Lindell and B.~Pinkas.
+		\newblock A Proof of Yao's Protocol for Secure Two-Party Computation.
+		\newblock Cryptology ePrint Archive, Report 2004/175, 2004.
+		
+		
+		\bibitem{L04}
+		H. Lipmaa.
+		\newblock An Oblivious Transfer Protocol with Log-Squared Communication.
+		\newblock In {\em Proc.\ 8th ICS}, pages 314-328, 2005. Full
+		version on eprint.
+		
+		\bibitem{NN} M.~Naor and K.~Nissim.
+		\newblock Communication Preserving Protocols for Secure Function
+		Evaluation.
+		\newblock In {\em Proc.\ 33rd STOC}, pages 590--599, 2001.
+		
+		\bibitem{NP01} M.~Naor and B.~Pinkas.
+		\newblock Efficient oblivious transfer protocols.
+		\newblock In {Proc.\ SODA 2001}.
+		
+		\bibitem{NZ} N.~Nisan and D.~Zuckerman.
+		\newblock Randomness is Linear in Space.
+		\newblock {\em J. Comput. Syst. Sci.}, Vol. 52(1), pages 43-52, 1996.
+		\newblock Earlier version in STOC '93.
+		
+		\bibitem{OS}
+		R.~Ostrovsky and W.~E.~Skeith III.
+		\newblock  Private Searching on
+		Streaming Data.
+		\newblock In {\em Proc.\ Crypto 2005}, pages 223-240.
+		
+		\bibitem{Pai}
+		P.~Paillier.
+		\newblock  Public-Key Cryptosystems Based on Composite Degree Residuosity
+		Classes.
+		\newblock  In {\em Proc.\ of EUROCRYPT 1999}, pages 223-238.
+		
+		\bibitem{Ra}
+		M.O.~Rabin.
+		\newblock How to Exchange Secrets by Oblivious Transfer.
+		\newblock Tech. Memo TR-81, Aiken Computation Laboratory, Harvard U., 1981.
+		
+		\bibitem{Rap}
+		D.~Rappe.
+		\newblock Homomorphic Cryptosystems and their Applications.
+		\newblock Ph.D. Thesis, University of Dortmund, Germany, August 2004.
+		Available at Cryptology ePrint Archive: Report 2006/001.
+		
+		\bibitem{syy99}
+		T.~Sander, A.~Young, and M.~Yung.
+		\newblock {Non-Interactive CryptoComputing For NC1}.
+		\newblock In {\em Proc.\ $40$th FOCS}, pages 554--567. IEEE, 1999.
+		
+		\bibitem{Ste98}
+		J.P.~Stern.
+		\newblock A new and efficient all or nothing Disclosure of Secrets protocol.
+		\newblock In {\em Proc. AsiaCrypt 98}, vol. 1514, pages 357-371
+		
+		\bibitem{yao86}
+		A.C.C.~Yao.
+		\newblock {How to Generate and Exchange Secrets}.
+		\newblock In {\em Proc.\ $27$th FOCS}, pages 162--167. IEEE, 1986.
+		
+		
+	\end{thebibliography}
+	
+\end{footnotesize}  
+  
+   
+ \end{document}
+ 
+ 
