@@ -260,6 +260,39 @@
 
 \begin{document}
 	\maketitle
+	
+\begin{abstract}
+	
+	We present a public-key encryption scheme with the following
+	properties. Given a branching program $P$ and an encryption $c$ of
+	an input $x$, it is possible to efficiently compute a {\em succinct}
+	ciphertext $c'$ from which $P(x)$ can be efficiently decoded using
+	the secret key. The size of $c'$ depends polynomially on the size of
+	$x$ and the {\em length} of $P$, but does not further depend on the
+	size of $P$. As interesting special cases, one can efficiently
+	evaluate finite automata, decision trees, and OBDDs on encrypted
+	data, where the size of the resulting ciphertext $c'$ does not
+	depend on the size of the object being evaluated. These are the
+	first general representation models for which such a feasibility
+	result is shown. Our main construction generalizes the approach of
+	Kushilevitz and Ostrovsky (FOCS 1997) for constructing single-server
+	Private Information Retrieval protocols.
+	
+	We also show how to strengthen the above so that $c'$ does not
+	contain additional information about $P$ (other than $P(x)$ for some
+	$x$) even if the public key and the ciphertext $c$ are maliciously
+	formed. This yields a two-message secure protocol for evaluating a
+	length-bounded branching program $P$ held by a server on an input
+	$x$ held by a client. A distinctive feature of this protocol is that
+	it hides the size of the server's input $P$ from the client. In
+	particular, the client's work is independent of the size of $P$.
+	
+	%The technique for handling maliciously formed
+	%ciphertexts builds on previous related techniques of Kalai
+	%(EUROCRYPT '05).
+	
+\end{abstract}
+
 \section{Introduction}
 Computing on encrypted data is arguably one of the most intriguing
 open problems in cryptography. The variant of this problem we are
