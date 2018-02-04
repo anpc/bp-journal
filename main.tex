@@ -2239,7 +2239,7 @@ from the previous section (with insignificant modifications) reveals no extra in
 
 By Claim~\ref{cl-djgeneral}, this group contains
 $\support(\encdj(\Z_{N,e}))=(<\tilde{g}>,*,C'_1)$ as a subgroup, so it poses a weaker
-restriction on the inputs then the construction in
+restriction on the inputs than the construction in
 Section~\ref{sec-trusted} (as the group is larger and keys are malformed). 
 
 To gain some intuition, we can manage with $c$ in this gorup, as re-randomization by $r^{N^e}$ takes care of attacks as in Example~\ref{ex-fullymal-attack}, by ``erasing'' the third component, and the CDS takes care of
@@ -2266,7 +2266,7 @@ This construction is described in Section~\ref{subsec-mal-uncond}.
 As explained in the overview above, in this section we explain how to achieve server's privacy for arbitrarily malformed keys, while assuming
 the encryptions sent by the client fall in a certain subgroup of $\U{N,e+1}$. 
 More specifically, we describe the (slight) modification in the AIR atomic CDS construction, which allows the
-Construction from Section~\ref{sec-trusted} to remain server private conditioned on the fact that all $c_i$'s sent belong to the `harmless' subgroup $(*,*,C'_1)$.
+construction from Section~\ref{sec-trusted} to remain server private conditioned on the event that all $c_i$'s sent belong to the `harmless' subgroup $(*,*,C'_1)$.
 Although the result proven in this subsection holds for
 any $e>0$, we assume $e\geq T$ for simplicity, so $C'_1=\set{0}$. The analysis can be easily generalized
 to work for $e>0$. The restriction $e\geq T$ is required for the final construction providing unconditional server privacy described in Section~\ref{subsec-mal-uncond},
@@ -2325,7 +2325,7 @@ $s$ is disclosed under the condition that $c$ is in $\encdj(i)$, that is,
 $c$ is an `encryption' of $i$ under the (possibly malformed) key
 pair $N,e$. More formally, the equivalents of properties (1),(2) of Construction~\ref{con-air-cds-orig} 
 for possibly malformed $N$, which are satisfied by the above
-construction are summarized by the following lemma.
+construction, are summarized by the following lemma.
 \begin{lemma}
   \label{lem-air-cds-priv}
   Let $N,e,c,i$ be as in Construction~\ref{con-air-cds-aug}. We
@@ -2372,7 +2372,7 @@ CDS under monotone formulas over the atomic predicates $EQ(\cdot)$, which `inher
 conditions as in Section~\ref{sec-trusted}).
 More formally, given $k$, multiple values $\opbrange{c_1}{c_n}\in\U{N^{e+1}}$, and a monotone formula $C$ over predicates $y_{i,v}$, for some $v\in[N^e]$, which assume $1$ iff. $EQ(N,e,c_i,v)=1$, condition (1) states that if $N,e$ is a valid key pair, and $\opbrange{c_1}{c_n}$ satisfies a set of $y_{i,v}$'s, so that $C$ evaluates to 1, then $s$ can be efficiently recovered from $\mu$. Condition (2), states that if $\opbrange{c_1}{c_n}$ does not satisfy a set of $y_{i,v}$'s, such that $C$ evaluates to 1, then $\mu$ can be simulated from $N,e,c,\size{s}$ alone, with distance $\eps(k)$, where $\eps(k)$ is a negligible function (to facilitate the use of this CDS
 for our application, and obtain statistical server privacy, we also ``enhance'' the privacy requirement so that only negligible information about $s$ is revealed).
-\paragraph{}Revising the question of increasing the domain of $\rho$, we see that had we sampled $\rho$ from $\Z_{N^e}$, some of the solutions $(s,\tilde{\rho})$ could not be sampled (since $\order(h')$ may be upto $N^{e+1}/S$, which is possibly larger than $N^e$), and we could theoretically get a single reachable pair of solutions $(s,\tilde{\rho})$ while there is more than one solution (over $[N^e]\times[\order(h')]$), and uniquely recover $s$.
+\paragraph{}Revising the question of increasing the domain of $\rho$, we see that had we sampled $\rho$ from $\Z_{N^e}$, some of the solutions $(s,\tilde{\rho})$ could not be sampled (since $\order(h')$ may be up to $N^{e+1}/S$, which is possibly larger than $N^e$), and we could theoretically get a single reachable pair of solutions $(s,\tilde{\rho})$ while there is more than one solution (over $[N^e]\times[\order(h')]$), and uniquely recover $s$.
 \begin{remark}%[On extending the CDS construction beyond DJ]
   %Can we adjust the the domains for $s,\rho$, to make it work for other homomorphic cryptosystems?
   We rely on the fact that a multiple ($N^{e+1}$) of $\size{P}$ can be efficiently
@@ -2554,11 +2554,11 @@ We prove the following theorem.
 \end{proof}
 
 Here we consider statistical server privacy, and the communication complexity
-is $O(n\ell^2poly(k))$ in this case. As mentioned in the previous section, if we settle for computational server privacy, the communication complexity may be reduced to $O(n\ell poly(k))$.
+is $O(n\ell^2\poly(k))$ in this case. As mentioned in the previous section, if we settle for computational server privacy, the communication complexity may be reduced to $O(n\ell \poly(k))$.
 
 \paragraph{} It is interesting to note that the \ot construction of Kalai in ~\cite{T05} in the context
 of Paillier also implicitly relies on a variant of CDS under the condition `$c$ is in $Enc_N(0)$', where $N$ is possibly malformed.
-Her CDS variant extends techniques of smooth projective hashing by Cramer and Shoup,
+Her CDS variant extends techniques of smooth projective hashing by Cramer and Shoup~\cite{addref},
 for sets specified by malformed keys $N$, and has a different structure.
 It allows to disclose secrets over conditions of the form $c\in(0,*,0)$, for arbitrary $N$, and $e=1$
 (any such CDS can be used to disclose secrets under conditioned as $c\in(i\cdot \tilde{g},*,0)$ for any $i$), for a variant of the Paillier cryptosystem. As mentioned before, this construction can be
