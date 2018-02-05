@@ -5,6 +5,9 @@
 \def\L{\protect\pL}  
 \def\R{\protect\pR}
 
+\usepackage{enumitem}  
+\setitemize{leftmargin=*, align=left}
+
 %% notes
 
 \newcommand{\todo}[1][Default]{}
@@ -1667,29 +1670,71 @@ subgroup of the plaintext group. If $s$ is chosen uniformly at
 random from the plaintext group, then $s$ will still have at least
 one bit of remaining entropy even when conditioned on $\mu$.
  
-Let us first define an abstraction of such a weaker `atomic' CDS, to be used in the sequel in more adversarial settings (where by $N$ and $c$ are malformed). This CDS leaves some entropy regarding the secret if the corresponding equality condition does not hold, and fully revealed otherwise. We will show how to combine such CDS to obtain CDS under arbitrary (monotone) predicates of equality conditions (for several encryptions).
+Let us first define an abstraction of such a weaker `atomic' CDS, to be used in the sequel in more adversarial settings (where by $N$ and $c$ are possibly malformed)\footnote{The reader is invited to ignore malformed inputs in the definition while reading this section.}. This CDS leaves some entropy regarding the secret if the corresponding equality condition does not hold, and fully reveals it otherwise. We will show how to combine such CDS to obtain CDS under arbitrary (monotone) predicates of equality conditions (for several encryptions).
 
-\begin{definition}[weak CDS]
-	Let us fix a public key encryption system $E-(\enc,\dec)$. A CDS scheme based on $E$, $\text{CDS}_E,\text{Rec}_E$ is an efficient algorithm recieving a purported public key and encryption $pk,c$ a value $i$, and a secret $s\in S$. It satisfies the following properties:
-	(1) Correctness: if $(pk,sk)$ is a valid key pair, and $c\in \support(\enc(pk,i))$, then for all $\mu \in CDS(pk,c,s)$, $\text{Rec}(sk,\mu)$ outputs $s$ with probability 1.
-	(2) Hiding: Consider an experiment where $s$ is sampled uniformly from $S$, and denote by $\mu$ the output of $CDS(pk,i,s)$. Even if $pk,c$ are malformed, unless $c$ falls inside a certain set $M_{pk,i}$ then for all $\mu_0$ in $\support(CDS(pk,c,s))$, $H_\infty(s|\mu = \mu_0)$, where $s$ is samp. Here we assume
-	\footnote{Typically, if $pk$ is well-formed, $M_i=\support(\enc(pk,i))$.} 
+\begin{definition}[weak atomic CDS]\label{def-wa-cds}
+	Let us fix a public key encryption system $E-(\enc,\dec)$. A CDS scheme based on $E$, $\text{CDS}_E,\text{Rec}_E$ is a PPT algorithm receiving a purported public key and encryption (under $pk$) $pk,c$, a value $i$, and a secret $s\in S$ (where $S$ is a finite domain). For each $pk$ we define a set $M_{pk,v}$. For well-formed $pk$, $M_{pk,v}=\support(\enc(pk,v))$.\footnote{Intuitively, this means that if $c$ is associated with a value $v$ and key $pk$ in a certain way we have deemed "harmless" for us. This holds for all, even malformed $pk,c$, and even if membership in $M_{pk,v}$ is not efficiently testable.}
+	The CDS satisfies the following properties:
+	\begin{itemize}
+	\item[Correctness:] if $(pk,sk)$ is a valid key pair, and $c\in \support(\enc(pk,v))$, then for all $\mu \in CDS(pk,c,s)$, $\text{Rec}(sk,\mu)$ outputs $s$ with probability 1.
+	\item[Hiding:] Consider an experiment where $s$ is sampled uniformly from $S$, and denote by $\mu$ the output of $CDS(pk,v,s)$. For all $pk,c$ (even malformed), if $c$ does not fall inside $M_{pk,v}$ then for all $\mu_0$ in $\support(CDS(pk,c,s))$,	
+	\begin{equation}\label{eq-cds}
+		H_\infty(s|\mu = \mu_0)\geq 1
+	\end{equation}
+	\end{itemize}
 \end{definition} 
 
-This notion of weak privacy as above can be upgraded into the stronger statistical privacy.  
+We will need a stronger privacy notion, where Equation~\ref{eq-cds} is replaced by the requirement that for all $v$ and $\mu_0$ in $\support(CDS(pk,c,v,s))$, $\SD(s|CDS(pk,c,v,s)=\mu_0,U_S)\leq 2^{-k}$, where $k$ is a security parameter. We refer to this stronger primitive simply as \emph{atomic CDS}. 
+We will also require CDS under more complex conditions, specified as follows (we only define and use the stronger variant of this notion):
+
+\begin{definition}[CDS]
+	Let us fix a public key encryption system $E-(\enc,\dec)$. A CDS scheme based on $E$, $\text{CDS}_E,\text{Rec}_E$ is a PPT algorithm receiving a purported public key $pk$,
+	purported encryption vector $\textbf{c}=(c_1,\ldots,c_t)$
+	 a security parameter $1^k$, a monotone formula $C(x_1,\ldots,x_d)$ and a secret $s\in S$ (where $S$ is a finite domain). Here, for each $v$ a set $M_{pk,v}$ is defined as in Definition~\ref{def-wa-cds}.
+	Each $x_j$ is a boolean variable evaluating to 1 iff.
+	$c_{i_j}\in M_{pk,v_j}$ for a certain fixed tuple $(i_j,v_j)$. We
+	write $C(\textbf{c})$ to abbreviate $C(x_1(\textbf{c}),\ldots,x_d(\textbf{c}))$.
+	$CDS$ satisfies the following properties:
+	\begin{itemize}
+		\item[Correctness:] if $(pk,sk)$ is a valid key pair, and $C(\textbf{c})=true$, then for all $\mu \in CDS(pk,\textbf{c},s)$, $\text{Rec}(sk,\mu)$ outputs $s$ with probability 1.
+		\item[Hiding:] Consider an experiment where $s$ is sampled uniformly from $S$, and denote by $\mu$ the output of $CDS(pk,i,s)$. For all $pk,c$ (even malformed), if $c$ does not fall inside a certain set $M_{pk,i}$\;\footnote{Typically, if $pk$ is well-formed, $M_{pk,i}=\support(\enc(pk,i))$.}  then for all $\mu_0$ in $\support(CDS(pk,c,s))$,	
+		\begin{equation}\label{eq-cds}
+		H_\infty(s|\mu = \mu_0)\geq 1
+		\end{equation}
+	\end{itemize}
+\end{definition} 
+
+Next, we prove that weak atomic CDS suffices to construct (strong) 
+CDS, with only polynomial overhead.
+
+\begin{theorem}\label{thm-wacds-cds}
+	Assume there exists weak atomic CDS $CDS$ for public key encryption scheme $E=(\enc,\dec)$. Then there exists a CDS $CDS'$ for $E$ with the same $M_{pk,v}$ sets. The complexity of the resulting CDS scheme is $|CDS'(1^k,pk,c,C,s)|\leq |C||CDS(1^k,pk,c,v,s)|$ (for some value $v$ of the length encryptions on which $C$ is applied).
+\end{theorem}
+
+\paragraph{Proof of Theorem~\ref{thm-wacds-cds}}
+As a first step, we show how to upgrade weak atomic CDS into atomic CDS (under the same equality  condition $v$). This is done by extracting the residual randomness using standard privacy amplification techniques. Specifically, to disclose an $l$-bit
+secret we first apply $CDS$ $w=l+k$ times with independent
+secrets $s_i$, increasing the conditional entropy of 
+$\textbf{s}=(s_1,\ldots,s_t)$
+to $\leq w$, and then apply an arbitrary strong randomness extractor~\cite{NZ}
+(e.g., a pairwise independent hash function $H$\cite{BBR,ILL,BBCM}) to
+extract $l$ secret bits  distributed according to $D$ with $\SD(D,U_{\{0,1\}^l})\leq 2^{-k}$.)
+from the partially leaked secrets and xor the extracted value with $s$. That is, $CDS'(pk,c,v,s)$ returns $(s,r,H(\textbf{s},r),CDS(pk,c,v,s_1),\ldots,CDS(pk,c,v,s_w))$,
+where $\textbf{s}$ is a uniform in $\{0,1\}^{lw}$.
+
+Now, to upgrade atomic CDS $CDS$ to CDS $CDS'$, we proceed from the leaves up, as done in~\cite{AIR01}. We briefly repeat the idea for completeness.
+For a leaf node labeled by $x_j$, generate a fresh secret $s_j$, and 
+append $\mu_v=CDS'(1^{k'}, pk,c,v_j,s_j)$ to the output $\mu'$. For a node $v$ with children $v_1,\ldots,v_q$ which is an OR gate, generate a new secret $s_v$,
+or set $s_v=s$ if $s_v$ is the root of the formula tree.
+Append $\mu'$ $(s_v\oplus s_1,\ldots,s_v\oplus s_q)$, where $s_j$ is the secret picked for $v_j$. Similarly, for AND gates $v$, append
+$s_v\oplus_{j\leq q}s_j$. 
+
+The resulting scheme has a privacy error of $2^{-k'+\log{|C|}}$, where $|C|$ is the number of gates in $C$. Thus picking $k'=k+\log{|C|}$ results in privacy error $2^{-k}$, as required. The overall overhead of the scheme is indeed $|CDS(1^{k+\log(|C|)})|\cdot |C|$, as claim in Theorem~\ref{thm-wacds-cds}.\;\;\; $\blacksquare$
 
 
-This residual randomness can be extracted using standard privacy
-amplification techniques. Specifically, to disclose an $l$-bit
-secret we first repeat the above $l+k$ times with independent
-secrets $s_i$, increasing the conditional entropy to $l+k$, and
-then apply an arbitrary strong randomness extractor~\cite{NZ}
-(e.g., a pairwise independent hash function\cite{BBR,ILL,BBCM}) to
-extract $l$ (almost) perfectly secret bits from the partially leaked secrets and xor 
-the extracted value with $s$. 
+The above construction of weak CDS of~\cite{AIR01}, plugged into Theorem~\ref{thm-wacds-cds} yields a CDS as we need on inputs where $pk,c$ are well-formed, that is, in the trusted setup setting, since the weak CDS is designed to work only for such inputs.\footnote{If $c^*$ is not in the ciphertext group $\Z^*_{N^{e+1}}$, which can be efficiently recognized, the CDS replaces it with a default value $c^*=1$.}
 
-More explicitly, following is a statistical version of the CDS, conditioning on $\bigwedge_i(q_i\in E_{N,e}(0)\vee q_i\in E_{N,e}(1))$,
-as we need in our protocol.
+More concretely, in our protocol we need a CDS conditioning on $C=\bigwedge_i(q_i\in \enc_{N,e}(0)\vee q_i\in \enc_{N,e}(1))$. The resulting construction is as follows.
 \begin{itemize}
 \item Assume we need to disclose an $l$-bit secret. Pick an $l$-bit value independently at random.
 \item For the ``atomic'' conditions, of the form ``$q_i$ encrypts $b$'', involved, prepare a random secret
@@ -1715,7 +1760,7 @@ our problem in the trusted setup model. In this case, every
 possible string $c^*$ can be interpreted as a valid ciphertext
 encrypting some message $m$ in the plaintext group $\Z_{N^e}$.
 %(We will soon see why this does not hold in general.)
-(If $c^*$ is not in the ciphertext group $\Z^*_{N^{e+1}}$, which
+(recall that if $c^*$ is not in the ciphertext group $\Z^*_{N^{e+1}}$, which
 can be efficiently recognized, we let $c^*=1$.) Thus, we can use
 the above to disclose the server's answer under the condition that
 the $n$ encryptions produced by the client are well formed. This
@@ -1735,8 +1780,9 @@ additional multiplicative overhead of $O(\ell)$, as evident from the sketch abov
 The solution in the trusted setup model relied on the fact that
 for a valid public key $N$, the DJ cryptosystem is additively homomorphic and
 valid ciphertexts in $\support(\encdj(\Z_{N^e}))$ can be
-efficiently recognized.
-
+efficiently recognized. This is roughly what guaranteed the weak CDS to be hiding under the type of condition that we need for well-formed $pk$. That is, the CDS guarded us against sending encryptions of the wrong values as OT queries.
+Does the same weak CDS happen to be useful for malformed $N$ as well?
+(that is, the $M_{pk,v}$'s for malformed $pk,v$)
 %The solution in the trusted setup 1model relied on the fact that for
 %a valid public key $N$, the DJ cryptosystem is homomorphic in the
 %following sense: the output distribution of the encryption $\encdj$
@@ -1825,8 +1871,8 @@ $G_1\times G_2\times \{0\}$. Finally, we let $[N]$ denote the set
 of integers $\set{\opbrange{0}{N-1}}$ and let $\phi(N)$ denote
 Euler's totient function (that is, $\phi(N)=|\U{N}|$). The \emph{min-entropy}
 of a random variable $X$ with a finite support, by $H_\infty(X)=min_{i\in support(X)}(-\log{Pr(X=i)})$.
-For an event $A$, $H_\infty(X|A)$, denotes the infinity norm of $X$, conditioned that event $A$ occurred. For a pair of distributions $X,Y$ over a finite set $S$, the statistical distance between $X$ and $Y$ is denoted by $SD(X,Y) = \sum_{s\in S}1/2|Pr_{x\leftarrow X}(x = s) - Pr_{y\leftarrow Y}(y = s)|$
-We denote $\encdjnr(m)=g^m$, that is, the``encryption'' of $m$ where $r$ is fixed to 1.
+For an event $A$, $H_\infty(X|A)$, denotes the infinity norm of $X$, conditioned that event $A$ occurred. For a pair of distributions $X,Y$ over a finite set $S$, the statistical distance between $X$ and $Y$ is denoted by $\SD(X,Y) = \sum_{s\in S}1/2|Pr_{x\leftarrow X}(x = s) - Pr_{y\leftarrow Y}(y = s)|$
+We denote $\encdjnr(m)=g^m$, that is, the``encryption'' of $m$ where $r$ is fixed to 1. For a distribution $X$ and event $V$, we denote the conditional distribution of $X$ on $V$ by $X|V$.
 
 \remove{<<<
 We proceed with a few auxiliary algebraic claims used
@@ -2490,7 +2536,7 @@ The construction satisfies the following equivalent of Lemma~\ref{lem-air-cds-pr
   appears in exactly one pair. Since the algorithm samples $s,\rho$
   from $[N^{e-T}]\times[N^{e+1}]$, and $\order((N^T\tilde{h},0,0))$
   divides $N^{e+1}$, for all $\mu_0$, every possible value of $s$ is sampled
-  the same, non-zero, number of times. We conclude that $H_{\infty}(s|\mu=\mu_0)=\log(p)=1+\Omega(1)$.
+  the same, non-zero, number of times. We conclude that $H_{\infty}(s|\mu=\mu_0)=\log(p)\geq 1$.
 \end{proof}
 
 CDS over formulas of such equality conditions is constructed as described in Section~\ref{subsec-mal-cond},
@@ -2500,7 +2546,7 @@ where $EQ(\cdot)$ is replaced by $EQ'(\cdot)$.
   \label{con-main-fullymal}
   We modify the construction described for the trusted setup setting as follows.
   Use Construction~\ref{con-otimpl-mal} as the \ot implementation,
-  and use a CDS based on Construction~\ref{con-air-cds-aug2}, to disclose the output $a$ under the condition $C=\bigwedge^n_{i=1}(y_{i,0}\vee y_{i,1})$.
+  and use a CDS based on Construction~\ref{con-air-cds-aug2} as weak CDS plugged into Theorem~\ref{thm-wacds-cds}, to disclose the output $a$ under the condition $C=\bigwedge^n_{i=1}(y_{i,0}\vee y_{i,1})$.
   Additionally, $\eval$ checks that $N$ is an odd $2k$-bit number $>1$. If the check does not pass, output 0. Otherwise run the high level protocol as before, in particular, we make the optimization of computing the queries for lower levels by modular reduction. The $c_i$'s are interpreted as elements of $\U{N^{e_{\ell}+1}}$, where the $e_j$'s corresponding to each level are as determined by Construction~\ref{con-otimpl-mal} on $\beta'^{(j)}(k,2,1)$.
 \end{construction}
 We prove the following theorem.
